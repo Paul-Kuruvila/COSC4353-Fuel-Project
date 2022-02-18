@@ -118,6 +118,7 @@ button:hover{
     block-size: 35px;
     border: none;
     background-color: rgba(255, 255, 255, 0.308);
+    width:225px;
 }
 
 .signup-text a{
