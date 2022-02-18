@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="https://kit.fontawesome.com/5f6d378910.js" crossorigin="anonymous"></script>
+    <script src="./index.js"></script>
+    <title>Fuel.io - Signup</title>
+</head>
+<body>
+    <header id="navbar">
+        <h1 class="title"><a href="./index.html">Fuel.io</a></h1>
+        <nav>
+            <ul class="options">
+                <li><a href="./login.html">Login</a></li>
+                <li><a href="./register.html">Profile</a></li>
+                <!--<li><a href="#Option3">Option 3</a></li>
+                <li><a href="#Option4">Option 4</a></li> -->
+                <li><a href="https://github.com/" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a></li>
+            </ul>
+        </nav>
+    </header>
+    <form action="">
+        <ul class="signup-boxes">
+            <li>
+                <label class="">Full Name</label>
+                <input class="inputbox" type="text" required placeholder="First and last name"/>
+            </li>
+            <li>
+                <label>Address 1</label>
+                <input class="inputbox" type="text" required placeholder="Enter your address."/>
+            </li>
+            <li>
+                <label>Address 2 (If Applicable)</label>
+                <input class="inputbox" type="text" required placeholder="Enter your address."/>
+            </li>
+            <li>
+                <label>City</label>
+                <input class="inputbox" type="text" required placeholder="Enter the name of your city."/>
+            </li>
+            <li>
+                <label>State</label>
+                <select class="inputbox" id="state" name="state">
+                    <option value="Select a state" selected>Select a state</option>
+                    <option value="tx">TX</option>
+                    <option value="fl">FL</option>
+                </select>
+            </li>
+            <li>
+                <label>Zipcode</label>
+                <input class="inputbox" type="text" required placeholder="Enter your zipcode."/>
+            </li>
+            <li>
+                <button class="Submit" type="submit">Save</button>
+            </li>
+        </ul>
+    </form>
+</body>
+</html>
