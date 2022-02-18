@@ -1,0 +1,34 @@
+.generate {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .generate label {
+    text-align: left;
+    display: block;
+  }
+  
+  .generate h1 {
+    font-size: 20px;
+    color:#282c34;
+    margin-bottom: 30px;
+  }
+  
+  .generate input {
+    width: 100%;
+    padding: 5px 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    display: block;
+  }
+  
+  .generate button {
+    background:#282c34;
+    color: #fff;
+    border: 0;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
