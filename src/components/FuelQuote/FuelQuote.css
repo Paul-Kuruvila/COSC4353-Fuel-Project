@@ -4,31 +4,37 @@
     text-align: center;
   }
   
-  .generate label {
-    text-align: left;
-    display: block;
-  }
-  
-  .generate h1 {
-    font-size: 20px;
-    color:#282c34;
-    margin-bottom: 30px;
-  }
-  
-  .generate input {
-    width: 100%;
-    padding: 5px 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-    display: block;
-  }
-  
-  .generate button {
-    background:#282c34;
-    color: #fff;
-    border: 0;
-    padding: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-  }
+.generate label {
+  text-align: left;
+  font-size: 20px;
+  display: block;
+}
+
+.generate h1 {
+  font-size: 30px;
+  color:#000000;
+  margin-bottom: 20px;
+}
+
+.generate input {
+  text-align: right;
+  color:#000000;
+  font-size: 15px;
+  width: 100%;
+  padding: 5px 10px;
+  margin: 10px 0;
+  border: 2px solid #282c34;
+  background-color: #ddf7fa;
+  box-sizing: border-box;
+  display: block;
+  margin-bottom: 30px;
+}
+
+.generate button {
+  background:#282c34;
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}

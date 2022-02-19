@@ -26,7 +26,7 @@ const Login = () => {
                 </li>
                 <div className="signup-text">
                     <p>Don't have an account?
-                    <a href="/signup">Sign up here</a>.</p>
+                    <a href="/register">Sign up here</a>.</p>
                 </div>
             </ul>
         </form>

@@ -4,7 +4,7 @@ import './Navbar.css';
 function Navbar() {
     return (
         <header id="navbar">
-            <h1 class="title"><a href="/">Fuel.io</a></h1>
+            <h1 className = "title"><a href="/">Fuel.io</a></h1>
             <nav>
                 <ul className="options">
                     <li><a href="/login">Login</a></li>
