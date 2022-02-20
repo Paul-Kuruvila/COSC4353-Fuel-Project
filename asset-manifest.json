@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/COSC4353-Fuel-Project/static/css/main.58ea0228.css",
+    "main.js": "/COSC4353-Fuel-Project/static/js/main.691e64fb.js",
+    "index.html": "/COSC4353-Fuel-Project/index.html",
+    "main.58ea0228.css.map": "/COSC4353-Fuel-Project/static/css/main.58ea0228.css.map",
+    "main.691e64fb.js.map": "/COSC4353-Fuel-Project/static/js/main.691e64fb.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.58ea0228.css",
+    "static/js/main.691e64fb.js"
+  ]
+}
