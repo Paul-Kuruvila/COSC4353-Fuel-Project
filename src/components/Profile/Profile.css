@@ -1,0 +1,90 @@
+.profile {
+    margin: 0 auto;
+    position: relative;
+    bottom: 30px;
+    text-align: right;
+}
+
+.profile h1 {
+    text-align: center;
+    font-size: 30px;
+    color:#000000;
+    margin-bottom: 30px;
+}
+.profile .signup-boxes {
+    position: relative;
+    right: 75px;
+}
+
+.profile input{
+    text-align: left;
+    color:#000000;
+    font-size: 15px;
+    width: 50%;
+    padding: 5px 10px;
+    margin: 10px 0;
+    border: 2px solid #282c34;
+    background-color: #ddf7fa;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    margin-left: 15px;
+   
+}
+
+.profile select{
+    text-align: left;
+    color:#000000;
+    font-size: 15px;
+    width: 50%;
+    padding: 5px 6px;
+    margin: 10px 0;
+    border: 2px solid #282c34;
+    background-color: #ddf7fa;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    margin-left: 15px;
+}
+
+.profile option{
+    text-align: left;
+    color:#000000;
+    font-size: 15px;
+    width: 50%;
+    padding: 5px 6px;
+    margin: 10px 0;
+    border: 2px solid #282c34;
+    background-color: #ddf7fa;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    margin-left: 15px;
+}
+
+.profile .signup-boxes .passLabel {
+    margin-left: 5px;
+}
+
+.profile .signup-boxes .passLabel {
+    margin-left: 5px;
+}
+
+.profile .submitbutton {
+    position: relative;
+    text-align: center;
+    left: 75px;
+    margin: 25px;
+}
+
+.profile button {
+    padding: 10px 25px;
+    font-size: 25px;
+    cursor: pointer;
+    background-color: rgb(225, 225, 140);
+    border:none;
+    border-width: 2px;
+    border-radius: 50px;
+    margin-bottom: 25px;
+}
+
+.profile button:hover {
+    background-color: rgb(195, 195, 125);
+}

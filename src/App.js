@@ -5,6 +5,7 @@ import Login from './components/Login/Login';
 import Register from './components/Registration/Registration';
 import Profile from './components/Profile/Profile';
 import FuelQuote from './components/FuelQuote/FuelQuote';
+import FuelQuoteHistory from './components/FuelQuoteHistory/FuelQuoteHistory';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 function App() {
@@ -28,6 +29,9 @@ function App() {
             </Route>
             <Route path = "/fuelquoteform">
               <FuelQuote />
+            </Route>
+            <Route path = "/fuelquotehistory">
+              <FuelQuoteHistory />
             </Route>
           </Switch>
         </div>

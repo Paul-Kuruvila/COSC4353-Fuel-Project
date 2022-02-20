@@ -1,0 +1,7 @@
+.home button a {
+    margin: 0px;
+}
+
+.home button:hover {
+    background-color: rgb(195, 195, 125);
+}

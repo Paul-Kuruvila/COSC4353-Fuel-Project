@@ -12,37 +12,130 @@ code {
     monospace;
 }
 
-.navbar {
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  max-width:1000px;
-  margin: 0 auto;
-  border-bottom: 1px solid #f2f2f2;
-}
-
-.navbar h1{
-  color: #282c34;
-}
-
-.navbar .links {
-  margin-left: auto;
-}
-
-.navbar a {
-  margin-left: 16px;
-  text-decoration: none;
-  padding: 6px;
-}
-
-.navbar a:hover {
-  color: #282c34
-}
-
 .content {
   max-width: 600px;
   margin: 40px auto;
   padding: 20px;
+}
+
+
+
+
+*{
+  scroll-behavior: smooth;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  background-color: rgb(131, 157, 165);
+}
+
+li, a, i{
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 35px;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+header{
+  display:flex;
+  background-color: rgba(0, 0, 0, 0.2);
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+}
+
+.cta{
+  display: flex;
+  justify-content: center;
+  font-size: 35px;
+  padding-top: 250px;
+}
+
+.signup{
+  display: flex;
+  justify-content: center;
+  padding-top: 50px;
+}
+
+.title a{
+  font-size: 50px;
+}
+
+.title, a{
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  background-color:transparent;
+  margin-left: 1rem;
+  color: black;
+}
+
+.fa-github{
+  color: white;
+  transition: all 0.25s ease 0s;
+}
+
+.fa-github:hover{
+  color: black;
+}
+
+.options{
+  list-style: none;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.options li {
+  display: inline-block;
+  padding: 0px 15px 0px 0px;
+  border:none;
+  border-radius: 50px;
+  background-color: rgba(255, 255, 255, 0.308);
+}
+
+.options li:last-child{
+  background-color: transparent;
+}
+
+.options li a{
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.25s ease 0s;
+  font-size: 35px;
+}
+
+.options li a:hover {
+  color: black;
+}
+
+
+.signup-boxes li, label{
+  list-style: none;
+  font-size: 25px;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.inputbox{
+  font-size: 15px;
+  block-size: 35px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.308);
+  width:225px;
+}
+
+.signup-text a{
+  font-size: 20px;
+}
+
+.signup-text a{
+  color: purple;
+}
+
+.signup-text a:hover{
+  color: blue;
 }
 
 
