@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/COSC4353-Fuel-Project/static/css/main.58ea0228.css",
-    "main.js": "/COSC4353-Fuel-Project/static/js/main.881c759f.js",
-    "index.html": "/COSC4353-Fuel-Project/index.html",
-    "main.58ea0228.css.map": "/COSC4353-Fuel-Project/static/css/main.58ea0228.css.map",
-    "main.881c759f.js.map": "/COSC4353-Fuel-Project/static/js/main.881c759f.js.map"
+    "main.css": "/static/css/main.58ea0228.css",
+    "main.js": "/static/js/main.b5b6b5a3.js",
+    "index.html": "/index.html",
+    "main.58ea0228.css.map": "/static/css/main.58ea0228.css.map",
+    "main.b5b6b5a3.js.map": "/static/js/main.b5b6b5a3.js.map"
   },
   "entrypoints": [
     "static/css/main.58ea0228.css",
-    "static/js/main.881c759f.js"
+    "static/js/main.b5b6b5a3.js"
   ]
 }
