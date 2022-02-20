@@ -15,10 +15,10 @@ function App() {
         <Navbar />
         <div className = "content">
           <Switch>
-            <Route exact path = "/COSC4353-Fuel-Project">
+            <Route exact path = "/">
               <Home />
             </Route>
-            <Route path = "/COSC4353-Fuel-Project/login">
+            <Route path = "/login">
               <Login />
             </Route>
             <Route path = "/register">
