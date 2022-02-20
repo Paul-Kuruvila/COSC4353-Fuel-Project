@@ -1,7 +1,7 @@
 {
   "name": "react-app",
   "version": "0.1.0",
-  "homepage": "https://Paul-Kuruvila.github.io/COSC4353-Fuel-Project",
+  "homepage": "https://Paul-Kuruvila.github.io",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.2",

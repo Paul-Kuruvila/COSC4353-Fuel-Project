@@ -18,7 +18,7 @@ function App() {
             <Route exact path = "/COSC4353-Fuel-Project">
               <Home />
             </Route>
-            <Route path = "/login">
+            <Route path = "/COSC4353-Fuel-Project/login">
               <Login />
             </Route>
             <Route path = "/register">
