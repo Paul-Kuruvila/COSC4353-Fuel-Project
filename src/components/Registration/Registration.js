@@ -22,4 +22,6 @@ const Registration = () => {
   );
 }
 
+//SUBMIT BUTTON type = "submit" previously for validation, temporarily set to "button" to link to the other pages
+
 export default Registration;

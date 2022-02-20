@@ -106,6 +106,7 @@ const FuelQuote = () => {
       );
 }
 
-//<button onClick>Generate</button>
+//<button onClick>Generate</button> was used previously for validation, temporarily set to "button" to link to the other pages
+
 
 export default FuelQuote;

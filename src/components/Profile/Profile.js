@@ -96,6 +96,6 @@ const Profile = () => {
   );
 }
 
-//SUBMIT BUTTON type = "submit" previously, temporarily set to "button"
+//SUBMIT BUTTON type = "submit" previously for validation, temporarily set to "button" to link to the other pages
 
 export default Profile;
