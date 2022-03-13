@@ -3,4 +3,4 @@
 # dependencies
 backend_express/node_modules/
 frontend_reactapp/node_modules/
-/build/
+frontend_build/
