@@ -16,20 +16,22 @@ const FuelQuote = () => {
   const [backendData, setBackendData] = useState([{}]);
   
   useEffect(() => {
-    fetch("/api").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data)
-      }
-    )
+    fetch('http://localhost:5000/pricingmodule')
+      .then (res => {
+        return res.json();
+      })
+      .then(data => {
+        setBackendData(data);
+        console.log(data);
+      })    
   }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault();
     cost = (request * price).toFixed(2);
     const fuelQuote = {request, date, price, cost, address};
-    fetch('http://localhost:3000/fuelquotehistory', {
+   
+    fetch('http://localhost:5000/pricingmodule', {
       method: 'POST',
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(fuelQuote)
@@ -37,6 +39,7 @@ const FuelQuote = () => {
       console.log('new quote added')
     })
   }
+
       return (
       <div className="generate">
         <h1>Fuel Quote Form</h1>
@@ -133,6 +136,30 @@ const FuelQuote = () => {
 }
 
 //<button onClick>Generate</button> was used previously for validation, temporarily set to "button" to link to the other pages
+/*  useEffect(() => {
+    fetch("/pricingmodule").then(
+      response => response.json()
+    ).then(
+      data => {
+        setBackendData(data)
+      }
+    )
+    
+  }, [])
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    cost = (request * price).toFixed(2);
+    const fuelQuote = {request, date, price, cost, address};
+   
+    fetch('http://localhost:5000/pricingmodule', {
+      method: 'POST',
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(fuelQuote)
+    }).then(() => {
+      console.log('new quote added')
+    })
+    
+  }*/
 
 export default FuelQuote;
