@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const express = require('express');
 const session = require('express-session');
+const cors = require('cors');
 const path = require('path');
 const port = 5000;
 
@@ -12,6 +13,8 @@ const connection = mysql.createConnection({
 });
 
 const app = express();
+
+app.use(cors());
 
 app.use(session({
 	secret: 'secret',
@@ -68,5 +71,15 @@ app.get('/profile', function(request, response) {
 	}
 	response.end();
 });
+
+app.post("/pricingmodule", (req, res) => { //retrieve
+    console.log('Retrieving data from frontend')
+    console.log(req.body);
+    const data = req.body;
+    res.json({
+        status: "Data successfully retrieved",
+        cost: data.cost
+    });
+})
 
 app.listen(port, () => {console.log("Server started on port 5000")});
