@@ -108,11 +108,13 @@ app.post('/profile', (req,res) => {
 app.post("/fuelquotemodule", (req, res) => { //retrieve
     console.log('Retrieving data from frontend')
     console.log(req.body);
+
     const data = req.body;
 
-    console.log(userData);
-    let newData = JSON.stringify(userData);
-    fs.appendFile('./data/db.json', newData, function (err) {
+    //console.log(userData);
+    
+    userData.push(data)
+    fs.writeFile('./data/db.json', JSON.stringify(userData), function (err) {
         if (err) throw err;
     });
     
