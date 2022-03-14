@@ -2,7 +2,7 @@ import './Login.css';
 import React, {useEffect, useState} from 'react';
 
 const Login = () => {
-    /*const [username, setUsername] = useState();
+    const [username, setUsername] = useState();
     const [password, setPassword] = useState();
 
     const handleSubmit = async () => { //sending data
@@ -16,21 +16,28 @@ const Login = () => {
         const response = await fetch('http://localhost:5000/auth', options);
         const jsonData = await response.json();
         console.log(jsonData);
-    }*/
+    }
   return (
       <div className="login">
-        <form action = "/auth" method = "post">
+        <form onSubmit = {handleSubmit}>
             <ul className="signup-boxes">
                 <li>
                     <label className="userLabel">Username:</label>
-                    <input id="username" className="inputbox" type="text" title="Please enter your username." required placeholder="Enter your username."/>
+                    <input id="username" className="inputbox" type="text" title="Please enter your username." required placeholder="Enter your username."
+                    value = {username}
+                    onChange = {(e) => setUsername(e.target.value)}
+                    />
                 </li>
                 <li>
                     <label className="passLabel">Password:</label>
-                    <input id="password" className="inputbox" type="password" title="Please enter your password." required placeholder="Enter your password."/>
+                    <input id="password" className="inputbox" type="password" title="Please enter your password." required placeholder="Enter your password."
+                    value = {password}
+                    onChange = {(e) => setPassword(e.target.value)}
+                    />
+                    
                 </li>
                 <li>
-                    <button className="Submit" type="submit" value ="Login">Login</button>
+                    <button className="Submit" type="submit">Login</button>
                 </li>
                 <div className="signup-text">
                     <p>Don't have an account?

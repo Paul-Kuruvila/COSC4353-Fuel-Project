@@ -5,12 +5,12 @@ const cors = require('cors');
 const path = require('path');
 const port = 5000;
 
-const connection = mysql.createConnection({
+/*const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
 	password : 'admin',
 	database : 'nodelogin'
-});
+});*/
 
 const app = express();
 
@@ -26,9 +26,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'static')));
 
 
-app.get('/', function(request, response) {
+app.get('/', function(request, response) {//ignore for now
 	// Render login template
-	response.sendFile(path.join(__dirname + '/login.html'));
+	response.sendFile(path.join(__dirname + '/login'));
 });
 
 app.post('/auth', function(request, response) {
@@ -38,12 +38,13 @@ app.post('/auth', function(request, response) {
 	let password = request.body.password;
 	// Ensure the input fields exists and are not empty
 	if (username && password) {
+        console.log("Successfully obtained username and password")
 		// Execute SQL query that'll select the account from the database based on the specified username and password
-		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+		//connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
 			// If there is an issue with the query, output the error
-			if (error) throw error;
+			//if (error) throw error;
 			// If the account exists
-			if (results.length > 0) {
+			/*if (results.length > 0) {
 				// Authenticate the user
 				request.session.loggedin = true;
 				request.session.username = username;
@@ -52,8 +53,8 @@ app.post('/auth', function(request, response) {
 			} else {
 				response.send('Incorrect Username and/or Password!');
 			}			
-			response.end();
-		});
+			response.end();*/
+		//});
 	} else {
 		response.send('Please enter Username and Password!');
 		response.end();
