@@ -110,6 +110,19 @@ app.get('/profile', function(request, response) {
 		response.send('Please login to view this page!');
 	}
 
+app.post('/profile', (req,res) => {
+    // If the user is loggedin
+    let username = request.body.username;
+    let password = request.body.password;
+	
+    if (request.session.loggedin) {
+        // Output username
+        response.send('Welcome back, ' + username + " " + password + '!');
+    } else {
+        // Not logged in
+        response.send('Please login to view this page!');
+    }
+    response.end();
 });
 
 app.post("/fuelquotemodule", (req, res) => { //retrieve
