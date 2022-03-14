@@ -15,29 +15,24 @@ const FuelQuote = () => {
 
   const [backendData, setBackendData] = useState([{}]);
   
-  useEffect(() => {
-    fetch('http://localhost:5000/pricingmodule')
-      .then (res => {
-        return res.json();
-      })
-      .then(data => {
-        setBackendData(data);
-        console.log(data);
-      })    
-  }, [])
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => { //sending data
+    //e.preventDefault
     cost = (request * price).toFixed(2);
-    const fuelQuote = {request, date, price, cost, address};
-   
-    fetch('http://localhost:5000/pricingmodule', {
+    const fuelData = {request, date, price, cost, address};
+    
+    const options = {
       method: 'POST',
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(fuelQuote)
-    }).then(() => {
-      console.log('new quote added')
-    })
+      body: JSON.stringify(fuelData)
+    };
+    /*fetch('http://localhost:5000/pricingmodule', options).then(response => {
+      const jsonData = response.json();
+      console.log(jsonData);
+    })*/
+
+    const response = await fetch('http://localhost:5000/pricingmodule', options);
+    const jsonData = await response.json();
+    console.log(jsonData);
   }
 
       return (
@@ -66,7 +61,7 @@ const FuelQuote = () => {
                 />
                 <label className = "pricelabel">Suggested Price ($ per gallon)</label>
                 <input className = "price"
-                  readonly = "readonly"
+                  readOnly
                   type = "number"
                   min="0.01"
                   step="0.01"
@@ -75,7 +70,7 @@ const FuelQuote = () => {
                 />
                 <label className = "costlabel">Total Cost ($)</label>
                 <input className = "cost"
-                  readonly = "readonly"
+                  readOnly
                   type = "number"
                   min="0.01"
                   step="0.01"
@@ -120,15 +115,12 @@ const FuelQuote = () => {
                 onChange = {(e) => setZipcode(e.target.value)}
               />
           </div>
-          <a href = "\fuelquotehistory">
           <button onClick>Generate</button>
-          </a>
-
-          <a href = "\fuelquotehistory">
-          <button type = "button">fqh</button>
-          </a>
-
+        
         </form>
+        <a href = "\fuelquotehistory">
+        <button type = "button">fqh</button>
+        </a>
       </div>
 
       
