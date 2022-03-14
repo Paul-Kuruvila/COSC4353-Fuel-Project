@@ -97,7 +97,7 @@ app.post('/profile', (req,res) => {
 	
     if (request.session.loggedin) {
         // Output username
-        response.send('Welcome back, ' + request.session.username + '!');
+        response.send('Welcome back, ' + username + " " + password + '!');
     } else {
         // Not logged in
         response.send('Please login to view this page!');
