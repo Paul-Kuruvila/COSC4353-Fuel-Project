@@ -4,6 +4,7 @@ const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
 const port = 5000;
+const loginData = require('./data/db.json')
 
 /*const connection = mysql.createConnection({
 	host     : 'localhost',
@@ -33,18 +34,41 @@ app.get('/', function(request, response) {//ignore for now
 
 app.post('/auth', function(request, response) {
 	// Capture the input fields
-    console.log(request.body);
+    //console.log(request.body);
 	let username = request.body.username;
 	let password = request.body.password;
+    var loggedin = false;
+    
+    //console.log(loginData)
+    for (var i = 0; i < loginData.length; i++) {
+        if (username == loginData[i].username && password == loginData[i].password) {
+            loggedin = true;
+            break;
+        }
+        else {
+            loggedin = false;
+        }
+    }
+
+    if (loggedin == true) {
+        return response.json({
+            status: "Succesfully logged in",
+            userData: loginData,
+            });
+        }
+    else {
+        return response.json("Incorrect Username or Password")
+    }
+
 	// Ensure the input fields exists and are not empty
-	if (username && password) {
+	/*if (username && password) {
         console.log("Successfully obtained username and password")
-		// Execute SQL query that'll select the account from the database based on the specified username and password
-		//connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+		//Execute SQL query that'll select the account from the database based on the specified username and password
+		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
 			// If there is an issue with the query, output the error
-			//if (error) throw error;
+			if (error) throw error;
 			// If the account exists
-			/*if (results.length > 0) {
+			if (results.length > 0) {
 				// Authenticate the user
 				request.session.loggedin = true;
 				request.session.username = username;
@@ -53,12 +77,13 @@ app.post('/auth', function(request, response) {
 			} else {
 				response.send('Incorrect Username and/or Password!');
 			}			
-			response.end();*/
+			response.end();
 		//});
 	} else {
 		response.send('Please enter Username and Password!');
 		response.end();
-	}
+	}*/
+
 });
 
 app.get('/profile', function(request, response) {
