@@ -14,7 +14,11 @@ const Profile = () => {
   
     const handleSubmit = async(e) => { //sending data
     e.preventDefault();
-    
+    const options = {
+        method: 'POST',
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(address)
+      };
 
     const response = await fetch('http://localhost:5000/profile', options);
     const jsonData = await response.json();
