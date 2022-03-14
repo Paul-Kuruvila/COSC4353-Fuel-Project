@@ -1,26 +1,53 @@
 import './Profile.css';
+import React, {useEffect, useState} from 'react';
 
 const Profile = () => {
+    const [name, setName] = useState();
+
+    const [address, setAddress] = useState('address1');
+    const [address2, setAddress2] = useState('address2');
+    const [City, setCity] = useState('Houston');
+    const [State, setState] = useState('Texas');
+    const [Zipcode, setZipcode] = useState('77204');
+
+    const [backendData, setBackendData] = useState([{}]);
+  
+    const handleSubmit = async(e) => { //sending data
+    e.preventDefault();
+    
+
+    const response = await fetch('http://localhost:5000/profile', options);
+    const jsonData = await response.json();
+    console.log(jsonData);
+  }
   return (
       <div className="profile">
           <h1>Profile</h1>
-        <form action="">
+          <form onSubmit = {handleSubmit}>
             <ul className="signup-boxes">
                 <li>
                     <label className="">Full Name</label>
                     <input className="inputbox" type="text" required placeholder="Enter your first and last name."/>
+                    value = {name}
+                    onChange = {(e) => setName(e.target.value)}
                 </li>
                 <li>
                     <label>Address 1</label>
                     <input className="inputbox" type="text" required placeholder="Enter your address."/>
+                    value = {address}
+                    onChange = {(e) => setAddress(e.target.value)}
                 </li>
                 <li>
                     <label>Address 2</label>
                     <input className="inputbox" type="text" placeholder="Enter your address, if applicable."/>
+                    value = {address2}
+                    onChange = {(e) => setAddress2(e.target.value)}
                 </li>
                 <li>
                     <label>City</label>
                     <input className="inputbox" type="text" required placeholder="Enter the name of your city."/>
+                    value = {City}
+                    onChange = {(e) => setCity(e.target.value)}
                 </li>
                 <li>
                     <label>State</label>
@@ -78,10 +105,14 @@ const Profile = () => {
                         <option value="WV">WV</option>
                         <option value="WY">WY</option>
                     </select>
+                    value = {State}
+                    onChange = {(e) => setState(e.target.value)}
                 </li>
                 <li>
                     <label>Zipcode</label>
                     <input className="inputbox" type="text" required placeholder="Enter your zipcode."/>
+                    value = {Zipcode}
+                    onChange = {(e) => setZipcode(e.target.value)}
                 </li>
                 <li>
                     <div className = "submitbutton">
