@@ -90,19 +90,26 @@ app.post('/auth', function(request, response) {
 
 });
 
-app.post('/profile', (req,res) => {
-    // If the user is loggedin
-    let username = request.body.username;
-    let password = request.body.password;
-	
-    if (request.session.loggedin) {
-        // Output username
-        response.send('Welcome back, ' + request.session.username + '!');
-    } else {
-        // Not logged in
-        response.send('Please login to view this page!');
-    }
-    response.end();
+app.get('/profile', function(request, response) {
+	/*// If the user is loggedin /WILL BE UTILIZING MYSQL
+	if (request.session.loggedin) {
+		// Output username
+		response.send('Welcome back, ' + request.session.username + '!');
+	} else {
+		// Not logged in
+		response.send('Please login to view this page!');
+	}
+	response.end();*/
+
+    
+    if (loggedin == true) {
+		// Output username
+		response.send('Welcome back, ' + request.session.username + '!');
+	} else {
+		// Not logged in
+		response.send('Please login to view this page!');
+	}
+
 });
 
 app.post("/fuelquotemodule", (req, res) => { //retrieve

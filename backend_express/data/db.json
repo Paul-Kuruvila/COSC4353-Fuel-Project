@@ -1,5 +1,1 @@
-[
-    {"username":"paul","password":"123hi"},
-    {"username":"david","password":"hi123"},
-    {"request":"11","date":"2022-03-16","price":"2.50","cost":"27.50","address":"address1"}
-]
+[{"username":"paul","password":"123hi"},{"username":"david","password":"hi123"},{"request":"11","date":"2022-03-16","price":"2.50","cost":"27.50","address":"address1"},{"request":"11","date":"2022-03-23","price":"2.50","cost":"27.50","address":"address1"},{"request":"11","date":"2022-03-23","price":"2.50","cost":"27.50","address":"address1"}]
