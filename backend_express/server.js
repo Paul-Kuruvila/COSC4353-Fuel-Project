@@ -6,6 +6,10 @@ const path = require('path');
 const port = 5000;
 const loginData = require('./data/db.json')
 
+const fs = require('fs');
+let filedata = fs.readFileSync('./data/db.json');
+let userData = JSON.parse(filedata);
+
 /*const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
@@ -98,14 +102,24 @@ app.get('/profile', function(request, response) {
 	response.end();
 });
 
-app.post("/pricingmodule", (req, res) => { //retrieve
+app.post("/fuelquotemodule", (req, res) => { //retrieve
     console.log('Retrieving data from frontend')
     console.log(req.body);
     const data = req.body;
+
+    console.log(userData);
+    let newData = JSON.stringify(userData);
+    fs.appendFile('./data/db.json', newData, function (err) {
+        if (err) throw err;
+    });
+    
     res.json({
         status: "Data successfully retrieved",
-        cost: data.cost
     });
+})
+
+app.post("/pricingmodule", (req, res) => { //retrieve
+    
 })
 
 app.listen(port, () => {console.log("Server started on port 5000")});
