@@ -6,13 +6,15 @@ const Profile = () => {
     const [address, setAddress] = useState();
     const [address2, setAddress2] = useState();
     const [city, setCity] = useState();
-    const [state, setState] = useState();
+    var [state, setState] = useState();
     const [zipcode, setZipcode] = useState();
 
     const [backendData, setBackendData] = useState([{}]);
   
     const handleSubmit = async(e) => { //sending data
         e.preventDefault();
+        state = document.getElementById('state').value;
+
         const profileData = {name, address, address2, city, state, zipcode};
         const options = {
             method: 'POST',
@@ -114,7 +116,6 @@ const Profile = () => {
                         <option value="WV">WV</option>
                         <option value="WY">WY</option>
                     value = {state}
-                    onChange = {(e) => setState(e.target.value)}
                     </select>
                 </li>
                 <li>

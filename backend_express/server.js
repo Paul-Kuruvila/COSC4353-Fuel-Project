@@ -42,8 +42,8 @@ app.post('/register', function(request, response){
 
 	if(username && password){
 		try{
-			connection.promise().query(`INSERT INTO UserCredentials VALUES('${username}', '${password}') `);
-			response.status(201).send({ msg: 'Account created.' });
+			connection.promise().query(`INSERT INTO UserCredentials (username, password) VALUES('${username}', '${password}')`);
+			response.status(201).send({ msg: 'Account created. FRONTEND' });
 			console.log("Account created.");
 		}
 		catch(err){
@@ -90,6 +90,7 @@ app.post('/auth', function(request, response) {
 
 app.post('/profile', function(request, response) {
 	// If the user is loggedin /WILL BE UTILIZING MYSQL
+    console.log(request.body.state);
 	let name = request.body.name;
 	let address = request.body.address;
 	let address2 = request.body.address2;
