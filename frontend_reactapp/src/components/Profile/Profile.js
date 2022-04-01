@@ -3,27 +3,28 @@ import React, {useEffect, useState} from 'react';
 
 const Profile = () => {
     const [name, setName] = useState();
-
-    const [address, setAddress] = useState('address1');
-    const [address2, setAddress2] = useState('address2');
-    const [City, setCity] = useState('Houston');
-    const [State, setState] = useState('Texas');
-    const [Zipcode, setZipcode] = useState('77204');
+    const [address, setAddress] = useState();
+    const [address2, setAddress2] = useState();
+    const [city, setCity] = useState();
+    const [state, setState] = useState();
+    const [zipcode, setZipcode] = useState();
 
     const [backendData, setBackendData] = useState([{}]);
   
     const handleSubmit = async(e) => { //sending data
-    e.preventDefault();
-    const options = {
-        method: 'POST',
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(address)
-      };
+        e.preventDefault();
+        const profileData = {name, address, address2, city, state, zipcode};
+        const options = {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(profileData)
+        };
 
-    const response = await fetch('http://localhost:5000/profile', options);
-    const jsonData = await response.json();
-    console.log(jsonData);
+        const response = await fetch('http://localhost:5000/profile', options);
+        const jsonData = await response.json();
+        console.log(jsonData);
   }
+
   return (
       <div className="profile">
           <h1>Profile</h1>
@@ -53,7 +54,7 @@ const Profile = () => {
                 <li>
                     <label>City</label>
                     <input className="inputbox" type="text" required placeholder="Enter the name of your city."
-                    value = {City}
+                    value = {city}
                     onChange = {(e) => setCity(e.target.value)}
                     />
                 </li>
@@ -112,21 +113,21 @@ const Profile = () => {
                         <option value="WI">WI</option>    
                         <option value="WV">WV</option>
                         <option value="WY">WY</option>
-                    value = {State}
+                    value = {state}
                     onChange = {(e) => setState(e.target.value)}
                     </select>
                 </li>
                 <li>
                     <label>Zipcode</label>
                     <input className="inputbox" type="text" required placeholder="Enter your zipcode."
-                    value = {Zipcode}
+                    value = {zipcode}
                     onChange = {(e) => setZipcode(e.target.value)}
                     />
                 </li>
                 <li>
                     <div className = "submitbutton">
                         <a href="\fuelquoteform">
-                        <button className="Submit" type="button">Save</button>
+                        <button className="Submit" type="submit">Save</button>
                         </a>
                     </div>
                 </li>

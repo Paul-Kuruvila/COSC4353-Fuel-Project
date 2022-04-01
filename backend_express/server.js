@@ -87,15 +87,32 @@ app.post('/auth', function(request, response) {
 
 });
 
-app.get('/profile', function(request, response) {
+app.post('/profile', function(request, response) {
 	// If the user is loggedin /WILL BE UTILIZING MYSQL
+	let name = request.body.name;
+	let address = request.body.address;
+	let address2 = request.body.address2;
+	let city = request.body.city;
+	let state = request.body.state;
+	let zipcode = request.body.zipcode;
+
+	try{
+		connection.promise().query(`INSERT INTO ClientInformation VALUES('${name}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}') `);
+		response.status(201).send({ msg: 'Information saved.' });
+		console.log("Information saved.");
+	}
+	catch(err){
+		console.log(err);
+		console.log("Information was not saved.");
+	}
+
 	if (request.session.loggedin) {
 		// Output username
-		response.send('Welcome back, ' + request.session.username + '!');
+		//response.send('Welcome back, ' + request.session.username + '!');
 		console.log(`Welcome back, ${request.session.username}!`);
 	} else {
 		// Not logged in
-		response.send('Please login to view this page!');
+		//response.send('Please login to view this page!');
 		console.log("Please login to view this page!");
 	}
 	response.end();
