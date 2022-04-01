@@ -59,84 +59,55 @@ app.post('/auth', function(request, response) {
 	let username = request.body.username;
 	let password = request.body.password;
 
-	if(username && password){
-		try{
-			// connection.promise().query(`INSERT INTO UserCredentials VALUES('${username}', '${password}') `);
-			response.status(201).send({ msg: 'Username and password accepted.' });
-			console.log("Username and password accepted.");
-		}
-		catch(err){
-			console.log(err);
-		}
-	}
-    // var loggedin = false;
-    
-    // console.log(loginData)
-    // for (var i = 0; i < loginData.length; i++) {
-    //     if (username == loginData[i].username && password == loginData[i].password) {
-    //         loggedin = true;
-    //         break;
-    //     }
-    //     else {
-    //         loggedin = false;
-    //     }
-    // }
-
-    // if (loggedin == true) {
-    //     return response.json({
-    //         status: "Succesfully logged in",
-    //         userData: loginData,
-    //         });
-    //     }
-    // else {
-    //     return response.json("Incorrect Username or Password")
-    // }
-
 	// Ensure the input fields exists and are not empty
-	// if (username && password) {
-    //     console.log("Successfully obtained username and password")
-	// 	//Execute SQL query that'll select the account from the database based on the specified username and password
-	// 	connection.query('SELECT * FROM usercredentials WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
-	// 		// If there is an issue with the query, output the error
-	// 		if (error) throw error;
-	// 		// If the account exists
-	// 		if (results.length > 0) {
-	// 			// Authenticate the user
-	// 			request.session.loggedin = true;
-	// 			request.session.username = username;
-	// 			// Redirect to home page
-	// 			response.redirect('/home');
-	// 		} else {
-	// 			response.send('Incorrect Username and/or Password!');
-	// 		}			
-	// 		response.end();
-	// 	});
-	// } else {
-	// 	response.send('Please enter Username and Password!');
-	// 	response.end();
-	// }
+	if (username && password) {
+        console.log("Successfully obtained username and password");
+		//Execute SQL query that'll select the account from the database based on the specified username and password
+		connection.query('SELECT * FROM UserCredentials WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+			// If there is an issue with the query, output the error
+			if (error) throw error;
+			// If the account exists
+			if (results.length > 0) {
+				// Authenticate the user
+				request.session.loggedin = true;
+				request.session.username = username;
+				// Redirect to home page
+				response.redirect('/home');
+				console.log("Successfully logged in.");
+			} else {
+				response.send('Incorrect Username and/or Password!');
+				console.log("Incorrect Username and/or Password!");
+			}			
+			response.end();
+		});
+	} else {
+		response.send('Please enter Username and Password!');
+		response.end();
+	}
 
 });
 
 app.get('/profile', function(request, response) {
-	/*// If the user is loggedin /WILL BE UTILIZING MYSQL
+	// If the user is loggedin /WILL BE UTILIZING MYSQL
 	if (request.session.loggedin) {
 		// Output username
 		response.send('Welcome back, ' + request.session.username + '!');
+		console.log(`Welcome back, ${request.session.username}!`);
 	} else {
 		// Not logged in
 		response.send('Please login to view this page!');
+		console.log("Please login to view this page!");
 	}
-	response.end();*/
+	response.end();
 
     
-    if (loggedin == true) {
-		// Output username
-		response.send('Welcome back, ' + request.session.username + '!');
-	} else {
-		// Not logged in
-		response.send('Please login to view this page!');
-	}
+    // if (loggedin == true) {
+	// 	// Output username
+	// 	response.send('Welcome back, ' + request.session.username + '!');
+	// } else {
+	// 	// Not logged in
+	// 	response.send('Please login to view this page!');
+	// }
 
 });
 
