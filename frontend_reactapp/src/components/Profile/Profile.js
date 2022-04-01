@@ -31,27 +31,31 @@ const Profile = () => {
             <ul className="signup-boxes">
                 <li>
                     <label className="">Full Name</label>
-                    <input className="inputbox" type="text" required placeholder="Enter your first and last name."/>
+                    <input className="inputbox" type="text" required placeholder="Enter your first and last name."
                     value = {name}
                     onChange = {(e) => setName(e.target.value)}
+                    />
                 </li>
                 <li>
                     <label>Address 1</label>
-                    <input className="inputbox" type="text" required placeholder="Enter your address."/>
+                    <input className="inputbox" type="text" required placeholder="Enter your address."
                     value = {address}
                     onChange = {(e) => setAddress(e.target.value)}
+                    />
                 </li>
                 <li>
                     <label>Address 2</label>
-                    <input className="inputbox" type="text" placeholder="Enter your address, if applicable."/>
+                    <input className="inputbox" type="text" placeholder="Enter your address, if applicable."
                     value = {address2}
                     onChange = {(e) => setAddress2(e.target.value)}
+                    />
                 </li>
                 <li>
                     <label>City</label>
-                    <input className="inputbox" type="text" required placeholder="Enter the name of your city."/>
+                    <input className="inputbox" type="text" required placeholder="Enter the name of your city."
                     value = {City}
                     onChange = {(e) => setCity(e.target.value)}
+                    />
                 </li>
                 <li>
                     <label>State</label>
@@ -108,15 +112,16 @@ const Profile = () => {
                         <option value="WI">WI</option>    
                         <option value="WV">WV</option>
                         <option value="WY">WY</option>
-                    </select>
                     value = {State}
                     onChange = {(e) => setState(e.target.value)}
+                    </select>
                 </li>
                 <li>
                     <label>Zipcode</label>
-                    <input className="inputbox" type="text" required placeholder="Enter your zipcode."/>
+                    <input className="inputbox" type="text" required placeholder="Enter your zipcode."
                     value = {Zipcode}
                     onChange = {(e) => setZipcode(e.target.value)}
+                    />
                 </li>
                 <li>
                     <div className = "submitbutton">
