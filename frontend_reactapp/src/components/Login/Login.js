@@ -1,7 +1,9 @@
 import './Login.css';
 import React, {useEffect, useState} from 'react';
+import {useHistory} from "react-router-dom";
 
 const Login = () => {
+    const history = useHistory();
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
 
@@ -14,9 +16,16 @@ const Login = () => {
             body: JSON.stringify(loginData)
         };
 
-        const response = await fetch('http://localhost:5000/auth', options);
+        const response = await fetch('http://localhost:5000/auth', options)
         const jsonData = await response.json();
-        console.log(jsonData);
+        
+        if (jsonData.loggedin) { //if login status is successful
+            console.log(jsonData);
+            history.push('/profile') //redirect to profile page
+        }
+        else {
+            console.log(jsonData);
+        }
     }
     return (
         <div className="login">

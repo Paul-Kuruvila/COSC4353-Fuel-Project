@@ -14,7 +14,7 @@ const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
 	password : 'admin',
-	database : 'fuelio'
+	database : 'nodelogin'
 });
 
 const app = express();
@@ -83,8 +83,13 @@ app.post('/auth', function(request, response) {
 				request.session.loggedin = true;
 				request.session.username = username;
 				// Redirect to home page
-                response.json('Successfully logged in. (FRONTEND)');
+                response.json({
+                    loggedin: 'Successfully logged in. (FRONTEND)'
+                });
+                //response.status(200).end('OK');
+                response.end();
                 //response.redirect('http://localhost:3000/profile');
+                //response.writeHead(301, {Location: `http://localhost:3000/profile`}).end();
 				console.log("Successfully logged in.");
 			} else {
 				response.json('Incorrect Username and/or Password! (FRONTEND)');
@@ -125,6 +130,7 @@ app.post('/profile', function(request, response) {
 	} else {
 		// Not logged in
 		//response.send('Please login to view this page!');
+        response.json("Please login to view this page! (FRONTEND)")
 		console.log("Please login to view this page!");
 	}
 	
