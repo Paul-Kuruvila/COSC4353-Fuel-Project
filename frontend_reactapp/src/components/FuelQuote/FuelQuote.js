@@ -11,13 +11,32 @@ const FuelQuote = () => {
   const [price, setPrice] = useState('2.50');
   var [cost, setCost] = useState();
 
-  const [address, setAddress] = useState('address1');
-  const [address2, setAddress2] = useState('address2');
-  const [City, setCity] = useState('Houston');
-  const [State, setState] = useState('Texas');
-  const [Zipcode, setZipcode] = useState('77204');
+  var [fullname, setName] = useState(fullname);
+  var [address, setAddress] = useState('address');
+  var [address2, setAddress2] = useState(address2);
+  var [City, setCity] = useState(City);
+  var [State, setState] = useState(State);
+  var [Zipcode, setZipcode] = useState(Zipcode);
 
   const [backendData, setBackendData] = useState([{}]);
+
+  async function backend() {
+    const response = await fetch('/fuelquote')
+    const jsonData = await response.json();
+    //console.log(jsonData.address);
+    fullname = jsonData[0].fullname;
+    address = jsonData[0].address;
+    address2 = jsonData[0].address2;
+    City = jsonData[0].city;
+    State = jsonData[0].state;
+    Zipcode = jsonData[0].zipcode;
+
+    const clientData = {address, address2, City, State, Zipcode};
+    //console.log(jsonData);
+    console.log(clientData);
+  }
+
+  backend();
   
   const handleSubmit = async(e) => { //sending data
     e.preventDefault();
@@ -38,6 +57,9 @@ const FuelQuote = () => {
     
     const response = await fetch('/fuelquotemodule', options);
     const jsonData = await response.json();
+    console.log(jsonData);
+
+
   }
 
   return (
@@ -89,42 +111,42 @@ const FuelQuote = () => {
               type ="text"
               disabled = "true"
               value={address}
-              onChange = {(e) => setAddress(e.target.value)}
+              //onChange = {(e) => setAddress(e.target.value)}
             />
             <label>Address 2</label>
             <input
               type ="text"
               disabled = "true"
               value={address2}
-              onChange = {(e) => setAddress2(e.target.value)}
+              //onChange = {(e) => setAddress2(e.target.value)}
             />
             <label>City</label>
             <input
               type ="text"
               disabled = "true"
               value={City}
-              onChange = {(e) => setCity(e.target.value)}
+              //onChange = {(e) => setCity(e.target.value)}
             />
             <label>State</label>
             <input
               type ="text"
               disabled = "true"
               value={State}
-              onChange = {(e) => setState(e.target.value)}
+              //onChange = {(e) => setState(e.target.value)}
             />
             <label>Zipcode</label>
             <input
               type ="text"
               disabled = "true"
               value={Zipcode}
-              onChange = {(e) => setZipcode(e.target.value)}
+              //onChange = {(e) => setZipcode(e.target.value)}
             />
         </div>
         <button onClick>Generate</button>
       
       </form>
       <a href = "\fuelquotehistory">
-      <button type = "button">fqh</button>
+      <button type = "button">Quote History</button>
       </a>
     </div>
   );

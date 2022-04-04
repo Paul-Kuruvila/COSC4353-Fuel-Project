@@ -16,8 +16,8 @@ const Profile = () => {
     const handleSubmit = async(e) => { //sending data
         e.preventDefault();
         state = document.getElementById('state').value;
-
         const profileData = {name, address, address2, city, state, zipcode};
+        
         const options = {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
@@ -39,8 +39,6 @@ const Profile = () => {
 
     const handleLogout = async(e) => { //sending data
         e.preventDefault();
-
-        //const profileData = {name, address, address2, city, state, zipcode};
         const options = {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
@@ -174,6 +172,11 @@ const Profile = () => {
                 </a>
             </div>
         </form>
+        <div className = "submitbutton">
+            <a href="\fuelquoteform">
+            <button className="Submit" type="button">Fuel Quote</button>
+            </a>
+        </div>
       </div>
   );
 }

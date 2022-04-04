@@ -38,6 +38,21 @@ app.get('/', function(request, response) {//ignore for now
 	response.sendFile(path.join(__dirname + '/login'));
 });
 
+app.get("/fuelquote", (request, response) => {
+    connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM nodelogin.ClientInformation`, (err, results) => {
+        if (err) throw err;
+        response.send(results);
+        console.log(results);
+    });
+    /*response.send({
+        address: "Calhoun Road",
+        address2: "",
+        city: "Houston",
+        state: "Texas",
+        zipcode: "77204"
+    })*/
+})
+
 app.post('/register', function(request, response){
 	let username = request.body.username;
 	let password = request.body.password;
@@ -98,6 +113,12 @@ app.post('/auth', function(request, response) {
 			// If there is an issue with the query, output the error
 			if (error) throw error;
 			// If the account exists
+            if (request.session.loggedin == true) {
+                console.log("You are already logged in! (BACKEND)");
+                return response.send({
+                    status: 'You are already logged in! (FROM BACKEND)',
+                });
+            }
 			if (results.length > 0) {
 				// Authenticate the user
                 //loggedin = true;
@@ -113,13 +134,14 @@ app.post('/auth', function(request, response) {
                 });
                 console.log("Successfully logged in.");
                 console.log(`Welcome back, ${request.session.username}!`);
-                console.log(request.sessionID)
+                //console.log(request.sessionID)
                 response.end();
                 //response.status(200).end('OK');
                 //response.redirect('http://localhost:3000/profile');
                 //response.writeHead(301, {Location: `http://localhost:3000/profile`}).end();
 
-			} else {
+			} 
+            else {
 				response.send({
                     status: 'Incorrect Username and/or Password! (FROM BACKEND)',
                 });
@@ -146,7 +168,7 @@ app.post('/logout', function(request, response, next) {
         login
     })
     console.log("Successfully logged out (BACKEND)");
-    console.log(SID);
+    //console.log(SID);
     //console.log(login);
     response.end();
 });
@@ -155,7 +177,7 @@ app.post('/profile', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
     //console.log(request.session.loggedin)
-    console.log(request.sessionID)
+    //console.log(request.sessionID)
     let username = request.session.username
 	let fullname = request.body.name;
 	let address = request.body.address;
@@ -172,9 +194,11 @@ app.post('/profile', function(request, response) {
 			connection.promise().query(
                 `INSERT INTO ClientInformation (userid, fullname, address, address2, city, state, zipcode)  
                 VALUES((SELECT userid FROM UserCredentials WHERE username = '${username}'), 
-                '${fullname}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}')`
+                '${fullname}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}') ON DUPLICATE KEY
+                UPDATE fullname='${fullname}', address='${address}', address2='${address2}', city='${city}', state='${state}', zipcode='${zipcode}'`
             );
-			savedInfo = true;
+			
+            savedInfo = true;
             response.status(201).send({
                 status: 'Information saved.', 
                 login,
@@ -205,22 +229,46 @@ app.post('/profile', function(request, response) {
 
 });
 
-app.post("/fuelquotemodule", (req, res) => { //retrieve
-    console.log('Retrieving data from frontend')
-    console.log(req.body);
+app.post("/fuelquotemodule", (request, response) => { 
+    console.log('Retrieving data from frontend');
+    let fuel_request = request.body.request;
+    let fuel_date = request.body.date;
+    let fuel_price = 2.5;
+    let fuel_cost = (fuel_request * fuel_price).toFixed(2);
 
-    const data = req.body;
+    let login = request.session.loggedin;
+    let savedInfo = false;
 
-    //console.log(userData);
-    
-    userData.push(data)
-    fs.writeFile('./data/db.json', JSON.stringify(userData), function (err) {
-        if (err) throw err;
-    });
-    
-    res.json({
-        status: "Data successfully retrieved",
-    });
+    if (request.session.loggedin) {
+		try{
+			connection.promise().query(
+                `INSERT INTO FuelQuote (userid, request, date, price, cost)  
+                VALUES((SELECT userid FROM UserCredentials WHERE username = '${request.session.username}'), 
+                '${fuel_request}', '${fuel_date}', '${fuel_price}', '${fuel_cost}')`
+            );
+			
+            savedInfo = true;
+            response.status(201).send({
+                status: 'Fuel quote created.', 
+                login,
+                savedInfo
+            });
+			console.log("Fuel quote created.");
+		}
+		catch(err){
+			console.log(err);
+			console.log("Fuel quote could not be created.");
+		}
+	} else {
+        response.send({
+            status: "Please login to view this page! (FROM BACKEND)"
+        })
+		console.log("Please login to view this page!");
+	}
+	response.end();
+    /*connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM nodelogin.ClientInformation`, function (err, results) {
+        return console.log(results)
+    });*/
 })
 
 app.post("/pricingmodule", (req, res) => { //retrieve
