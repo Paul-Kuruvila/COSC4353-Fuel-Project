@@ -27,9 +27,9 @@ const FuelQuote = () => {
     setName(jsonData[0].fullname);
     setAddress(jsonData[0].address);
     setAddress2 (jsonData[0].address2);
-    setCity = jsonData[0].city;
-    setState = jsonData[0].state;
-    setZipcode = jsonData[0].zipcode;
+    setCity(jsonData[0].city);
+    setState(jsonData[0].state);
+    setZipcode(jsonData[0].zipcode);
 
     const clientData = {address, address2, City, State, Zipcode};
     //console.log(jsonData);
