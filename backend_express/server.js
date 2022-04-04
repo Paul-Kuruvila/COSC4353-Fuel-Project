@@ -64,7 +64,14 @@ app.post('/register', function(request, response){
                     status: 'Account name is already taken. (FROM BACKEND)'
                 });
 				console.log("Account name is already taken. (BACKEND)");
-			} else {
+			}
+            else if (request.session.loggedin == true) {
+                response.send({
+                    status: 'Already logged in. (FROM BACKEND)'
+                });
+				console.log("Already logged in. (BACKEND)");
+            } 
+            else {
 				try{
 					// encrypt password using SHA2-256 hash function
 					connection.promise().query(`INSERT INTO UserCredentials (username, password) VALUES('${username}', SHA2('${password}', 256))`);
@@ -115,6 +122,12 @@ app.post('/auth', function(request, response, next) {
 			// If there is an issue with the query, output the error
 			if (error) throw error;
 			// If the account exists
+            if (request.session.loggedin == true) {
+                console.log("You are already logged in! (BACKEND)");
+                return response.send({
+                    status: 'You are already logged in! (FROM BACKEND)',
+                });
+            }
 			if (results.length > 0) {
 				// Authenticate the user
                 //loggedin = true;
@@ -133,13 +146,14 @@ app.post('/auth', function(request, response, next) {
                 console.log("Successfully logged in.");
 				//return "Successfully logged in.";
                 console.log(`Welcome back, ${request.session.username}!`);
-                console.log(request.sessionID)
+                //console.log(request.sessionID)
                 response.end();
                 //response.status(200).end('OK');
                 //response.redirect('http://localhost:3000/profile');
                 //response.writeHead(301, {Location: `http://localhost:3000/profile`}).end();
 
-			} else {
+			} 
+            else {
 				response.send({
                     status: 'Incorrect Username and/or Password! (FROM BACKEND)',
                 });
@@ -168,7 +182,7 @@ function testlogout(out) {
 
 app.post('/logout', function(request, response) {
     let login = request.session.loggedin;
-    request.session.destroy();
+    request.session.destroy()
     response.send({
         status: "Successfully logged out (FROM BACKEND)",
         login
@@ -193,21 +207,33 @@ var name;
 app.post('/profile', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
-    console.log(request.session.loggedin)
-    console.log(request.sessionID)
-	name = request.body.name;
-	//request.session.name = name;
+    //console.log(request.session.loggedin)
+    //console.log(request.sessionID)
+    let username = request.session.username
+	let fullname = request.body.name;
 	let address = request.body.address;
 	let address2 = request.body.address2;
 	let city = request.body.city;
 	let state = request.body.state;
 	let zipcode = request.body.zipcode;
 
+    let login = request.session.loggedin;
+    let savedInfo = false;
+
 	if (request.session.loggedin) {
 		try{
-			connection.promise().query(`INSERT INTO ClientInformation (name, address, address2, city, state, zipcode) VALUES('${name}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}') `);
-			response.status(201).send({
-                status: 'Information saved.' 
+			connection.promise().query(
+                `INSERT INTO ClientInformation (userid, fullname, address, address2, city, state, zipcode)  
+                VALUES((SELECT userid FROM UserCredentials WHERE username = '${username}'), 
+                '${fullname}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}') ON DUPLICATE KEY
+                UPDATE fullname='${fullname}', address='${address}', address2='${address2}', city='${city}', state='${state}', zipcode='${zipcode}'`
+            );
+			
+            savedInfo = true;
+            response.status(201).send({
+                status: 'Information saved.', 
+                login,
+                savedInfo
             });
 			if (connection.promise().query(`SELECT * FROM ClientInformation WHERE ClientInformation.name = VARCHAR()`)) {
 				const testprof = testprof(true)
@@ -239,61 +265,46 @@ app.post('/profile', function(request, response) {
 
 });
 
-function testfuel(fuel) {
-	if (fuel == true) {
-		return "Fuel quote form was successfully generated.";
-	}
-	else {
-		return "Error";
-	}
-}
-//module.exports = testfuel;
-app.post("/fuelquotemodule", (req, res) => { //retrieve
-    console.log('Retrieving data from frontend')
-    console.log(req.body);
+app.post("/fuelquotemodule", (request, response) => { 
+    console.log('Retrieving data from frontend');
+    let fuel_request = request.body.request;
+    let fuel_date = request.body.date;
+    let fuel_price = 2.5;
+    let fuel_cost = (fuel_request * fuel_price).toFixed(2);
 
-    const data = req.body;
-	let request = req.body.request;
-	let date = req.body.date;
-	
-	let price = req.body.price;
-	let cost = req.body.cost;
-	let address = req.body.address;
-	let address2 = req.body.address2;
-	let city = req.body.city;
-	let state = req.body.state;
-	let zipcode = req.body.zipcode;
+    let login = request.session.loggedin;
+    let savedInfo = false;
 
-	if (request && date) {
-		try {
-			connection.promise().query(`INSERT INTO FuelQuote (address,address2,city,state,zipcode) SELECT address,address2,city,state,zipcode FROM ClientInformation WHERE name = ?`, [name]);
-			connection.promise().query(`INSERT INTO FuelQuote (request,date) VALUES('${request}', '${date}')`);
-			//res.status(201).send({msg: 'Created User'});
-
-			console.log("Fuel quote form was successfully generated.");
-			if (connection.promise().query(`SELECT * FROM ClientInformation,FuelQuote WHERE ClientInformation.address = FuelQuote.address`)) {
-				const testfuel = testfuel(true)
-			}
+    if (request.session.loggedin) {
+		try{
+			connection.promise().query(
+                `INSERT INTO FuelQuote (userid, request, date, price, cost)  
+                VALUES((SELECT userid FROM UserCredentials WHERE username = '${request.session.username}'), 
+                '${fuel_request}', '${fuel_date}', '${fuel_price}', '${fuel_cost}')`
+            );
 			
-			//return "Fuel quote form was successfully generated."
-			console.log("BYE2")
+            savedInfo = true;
+            response.status(201).send({
+                status: 'Fuel quote created.', 
+                login,
+                savedInfo
+            });
+			console.log("Fuel quote created.");
 		}
-		catch (err) {
+		catch(err){
 			console.log(err);
-			console.log("Fuel quote form was not generated.");
+			console.log("Fuel quote could not be created.");
 		}
+	} else {
+        response.send({
+            status: "Please login to view this page! (FROM BACKEND)"
+        })
+		console.log("Please login to view this page!");
 	}
-
-    //console.log(userData);
-    
-    userData.push(data)
-    fs.writeFile('./data/db.json', JSON.stringify(userData), function (err) {
-        if (err) throw err;
-    });
-    
-    res.json({
-        status: "Data successfully retrieved",
-    });
+	response.end();
+    /*connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM nodelogin.ClientInformation`, function (err, results) {
+        return console.log(results)
+    });*/
 })
 
 app.post("/pricingmodule", (req, res) => { //retrieve

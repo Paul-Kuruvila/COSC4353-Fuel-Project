@@ -16,24 +16,29 @@ const Profile = () => {
     const handleSubmit = async(e) => { //sending data
         e.preventDefault();
         state = document.getElementById('state').value;
-
         const profileData = {name, address, address2, city, state, zipcode};
+        
         const options = {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
-            credentials: "include",
+            //credentials: "include",
             body: JSON.stringify(profileData)
         };
 
         const response = await fetch('/profile', options);
         const jsonData = await response.json();
-        console.log(jsonData);
+        
+        if (jsonData.login && jsonData.savedInfo) { //if login status is true/successful and information is true/saved
+            console.log(jsonData);
+            history.push('/fuelquoteform') //redirect to fuelquoteform
+          }
+          else {
+            console.log(jsonData);
+        }
     }
 
     const handleLogout = async(e) => { //sending data
         e.preventDefault();
-
-        //const profileData = {name, address, address2, city, state, zipcode};
         const options = {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
@@ -46,7 +51,7 @@ const Profile = () => {
 
         if (jsonData.login == false) { //if login status is false
             console.log(jsonData);
-            history.push('/login') //redirect to profile page
+            history.push('/login') //redirect back to login page
         }
         else {
             console.log(jsonData);
@@ -167,6 +172,11 @@ const Profile = () => {
                 </a>
             </div>
         </form>
+        <div className = "submitbutton">
+            <a href="\fuelquoteform">
+            <button className="Submit" type="button">Fuel Quote</button>
+            </a>
+        </div>
       </div>
   );
 }

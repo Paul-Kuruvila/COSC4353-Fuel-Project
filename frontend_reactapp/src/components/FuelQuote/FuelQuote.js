@@ -1,19 +1,42 @@
 import './FuelQuote.css';
 import React, {useEffect, useState} from 'react';
+import {useHistory} from "react-router-dom";
+
 
 const FuelQuote = () => {
+  const history = useHistory();
+
   const [request, setRequest] = useState();
   const [date, setDate] = useState();
   const [price, setPrice] = useState('2.50');
   var [cost, setCost] = useState();
 
-  const [address, setAddress] = useState('address1');
-  const [address2, setAddress2] = useState('address2');
-  const [City, setCity] = useState('Houston');
-  const [State, setState] = useState('Texas');
-  const [Zipcode, setZipcode] = useState('77204');
+  var [fullname, setName] = useState();
+  var [address, setAddress] = useState();
+  var [address2, setAddress2] = useState();
+  var [City, setCity] = useState();
+  var [State, setState] = useState();
+  var [Zipcode, setZipcode] = useState();
 
   const [backendData, setBackendData] = useState([{}]);
+
+  async function backend() {
+    const response = await fetch('/fuelquote')
+    const jsonData = await response.json();
+    //console.log(jsonData.address);
+    setName(jsonData[0].fullname);
+    setAddress(jsonData[0].address);
+    setAddress2 (jsonData[0].address2);
+    setCity = jsonData[0].city;
+    setState = jsonData[0].state;
+    setZipcode = jsonData[0].zipcode;
+
+    const clientData = {address, address2, City, State, Zipcode};
+    //console.log(jsonData);
+    console.log(clientData); // data from db->backend->frontend(here)
+  }
+
+  backend();
   
   const handleSubmit = async(e) => { //sending data
     e.preventDefault();
@@ -23,6 +46,7 @@ const FuelQuote = () => {
     const options = {
       method: 'POST',
       headers: {"Content-Type": "application/json"},
+      //credentials: "include",
       body: JSON.stringify(fuelData)
     };
 
@@ -34,6 +58,8 @@ const FuelQuote = () => {
     const response = await fetch('/fuelquotemodule', options);
     const jsonData = await response.json();
     console.log(jsonData);
+
+
   }
 
   return (
@@ -80,47 +106,54 @@ const FuelQuote = () => {
         </div>
         <div className = "delAddress">
             <h2>Delivery Address</h2>
+            <label>Full Name</label>
+            <input
+              type ="text"
+              disabled = "true"
+              value={fullname}
+              //onChange = {(e) => setAddress(e.target.value)}
+            />
             <label>Address 1</label>
             <input
               type ="text"
               disabled = "true"
               value={address}
-              onChange = {(e) => setAddress(e.target.value)}
+              //onChange = {(e) => setAddress(e.target.value)}
             />
             <label>Address 2</label>
             <input
               type ="text"
               disabled = "true"
               value={address2}
-              onChange = {(e) => setAddress2(e.target.value)}
+              //onChange = {(e) => setAddress2(e.target.value)}
             />
             <label>City</label>
             <input
               type ="text"
               disabled = "true"
               value={City}
-              onChange = {(e) => setCity(e.target.value)}
+              //onChange = {(e) => setCity(e.target.value)}
             />
             <label>State</label>
             <input
               type ="text"
               disabled = "true"
               value={State}
-              onChange = {(e) => setState(e.target.value)}
+              //onChange = {(e) => setState(e.target.value)}
             />
             <label>Zipcode</label>
             <input
               type ="text"
               disabled = "true"
               value={Zipcode}
-              onChange = {(e) => setZipcode(e.target.value)}
+              //onChange = {(e) => setZipcode(e.target.value)}
             />
         </div>
         <button onClick>Generate</button>
       
       </form>
       <a href = "\fuelquotehistory">
-      <button type = "button">fqh</button>
+      <button type = "button">Quote History</button>
       </a>
     </div>
   );
