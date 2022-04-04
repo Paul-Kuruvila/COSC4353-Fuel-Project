@@ -113,7 +113,7 @@ app.post('/auth', function(request, response) {
                 });
                 console.log("Successfully logged in.");
                 console.log(`Welcome back, ${request.session.username}!`);
-                //console.log(request.sessionID)
+                console.log(request.sessionID)
                 response.end();
                 //response.status(200).end('OK');
                 //response.redirect('http://localhost:3000/profile');
@@ -138,7 +138,7 @@ app.post('/auth', function(request, response) {
 
 app.post('/logout', function(request, response, next) {
     request.session.loggedin = false;
-    //let SID = request.sessionID;
+    let SID = request.sessionID;
     let login = request.session.loggedin;
     request.session.destroy()
     response.send({
@@ -146,7 +146,7 @@ app.post('/logout', function(request, response, next) {
         login
     })
     console.log("Successfully logged out (BACKEND)");
-    //console.log(SID);
+    console.log(SID);
     //console.log(login);
     response.end();
 });
@@ -155,7 +155,8 @@ app.post('/profile', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
     //console.log(request.session.loggedin)
-    //console.log(request.sessionID)
+    console.log(request.sessionID)
+    let username = request.session.username
 	let fullname = request.body.name;
 	let address = request.body.address;
 	let address2 = request.body.address2;
@@ -163,11 +164,21 @@ app.post('/profile', function(request, response) {
 	let state = request.body.state;
 	let zipcode = request.body.zipcode;
 
+    let login = request.session.loggedin;
+    let savedInfo = false;
+
 	if (request.session.loggedin) {
 		try{
-			connection.promise().query(`INSERT INTO ClientInformation (fullname, address, address2, city, state, zipcode) VALUES('${fullname}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}') `);
-			response.status(201).send({
-                status: 'Information saved.' 
+			connection.promise().query(
+                `INSERT INTO ClientInformation (userid, fullname, address, address2, city, state, zipcode)  
+                VALUES((SELECT userid FROM UserCredentials WHERE username = '${username}'), 
+                '${fullname}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}')`
+            );
+			savedInfo = true;
+            response.status(201).send({
+                status: 'Information saved.', 
+                login,
+                savedInfo
             });
 			console.log("Information saved.");
 		}

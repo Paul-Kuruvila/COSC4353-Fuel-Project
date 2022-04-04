@@ -21,7 +21,7 @@ const Registration = () => {
         
         if (jsonData.registered) { //if registration is successful
             console.log(jsonData);
-            history.push('/login') //redirect to profile page
+            history.push('/login') //redirect to login page
         }
         else {
             console.log(jsonData);

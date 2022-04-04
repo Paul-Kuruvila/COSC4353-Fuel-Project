@@ -21,13 +21,20 @@ const Profile = () => {
         const options = {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
-            credentials: "include",
+            //credentials: "include",
             body: JSON.stringify(profileData)
         };
 
         const response = await fetch('/profile', options);
         const jsonData = await response.json();
-        console.log(jsonData);
+        
+        if (jsonData.login && jsonData.savedInfo) { //if login status is true/successful and information is true/saved
+            console.log(jsonData);
+            history.push('/fuelquoteform') //redirect to fuelquoteform
+          }
+          else {
+            console.log(jsonData);
+        }
     }
 
     const handleLogout = async(e) => { //sending data
@@ -46,7 +53,7 @@ const Profile = () => {
 
         if (jsonData.login == false) { //if login status is false
             console.log(jsonData);
-            history.push('/login') //redirect to profile page
+            history.push('/login') //redirect back to login page
         }
         else {
             console.log(jsonData);

@@ -1,7 +1,11 @@
 import './FuelQuote.css';
 import React, {useEffect, useState} from 'react';
+import {useHistory} from "react-router-dom";
+
 
 const FuelQuote = () => {
+  const history = useHistory();
+
   const [request, setRequest] = useState();
   const [date, setDate] = useState();
   const [price, setPrice] = useState('2.50');
@@ -23,6 +27,7 @@ const FuelQuote = () => {
     const options = {
       method: 'POST',
       headers: {"Content-Type": "application/json"},
+      //credentials: "include",
       body: JSON.stringify(fuelData)
     };
 
@@ -33,7 +38,6 @@ const FuelQuote = () => {
     
     const response = await fetch('/fuelquotemodule', options);
     const jsonData = await response.json();
-    console.log(jsonData);
   }
 
   return (
