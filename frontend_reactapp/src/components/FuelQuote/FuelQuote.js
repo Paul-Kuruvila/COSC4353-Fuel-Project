@@ -11,12 +11,12 @@ const FuelQuote = () => {
   const [price, setPrice] = useState('2.50');
   var [cost, setCost] = useState();
 
-  var [fullname, setName] = useState(fullname);
-  var [address, setAddress] = useState('address');
-  var [address2, setAddress2] = useState(address2);
-  var [City, setCity] = useState(City);
-  var [State, setState] = useState(State);
-  var [Zipcode, setZipcode] = useState(Zipcode);
+  var [fullname, setName] = useState();
+  var [address, setAddress] = useState();
+  var [address2, setAddress2] = useState();
+  var [City, setCity] = useState();
+  var [State, setState] = useState();
+  var [Zipcode, setZipcode] = useState();
 
   const [backendData, setBackendData] = useState([{}]);
 
@@ -24,16 +24,16 @@ const FuelQuote = () => {
     const response = await fetch('/fuelquote')
     const jsonData = await response.json();
     //console.log(jsonData.address);
-    fullname = jsonData[0].fullname;
-    address = jsonData[0].address;
-    address2 = jsonData[0].address2;
-    City = jsonData[0].city;
-    State = jsonData[0].state;
-    Zipcode = jsonData[0].zipcode;
+    setName(jsonData[0].fullname);
+    setAddress(jsonData[0].address);
+    setAddress2 (jsonData[0].address2);
+    setCity = jsonData[0].city;
+    setState = jsonData[0].state;
+    setZipcode = jsonData[0].zipcode;
 
     const clientData = {address, address2, City, State, Zipcode};
     //console.log(jsonData);
-    console.log(clientData);
+    console.log(clientData); // data from db->backend->frontend(here)
   }
 
   backend();
@@ -106,6 +106,13 @@ const FuelQuote = () => {
         </div>
         <div className = "delAddress">
             <h2>Delivery Address</h2>
+            <label>Full Name</label>
+            <input
+              type ="text"
+              disabled = "true"
+              value={fullname}
+              //onChange = {(e) => setAddress(e.target.value)}
+            />
             <label>Address 1</label>
             <input
               type ="text"
