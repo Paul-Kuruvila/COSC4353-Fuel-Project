@@ -52,7 +52,14 @@ app.post('/register', function(request, response){
                     status: 'Account name is already taken. (FROM BACKEND)'
                 });
 				console.log("Account name is already taken. (BACKEND)");
-			} else {
+			}
+            else if (request.session.loggedin = true) {
+                response.send({
+                    status: 'Already logged in. (FROM BACKEND)'
+                });
+				console.log("Already logged in. (BACKEND)");
+            } 
+            else {
 				try{
 					// encrypt password using SHA2-256 hash function
 					connection.promise().query(`INSERT INTO UserCredentials (username, password) VALUES('${username}', SHA2('${password}', 256))`);
@@ -73,7 +80,7 @@ app.post('/register', function(request, response){
 	}
 });
 
-app.post('/auth', function(request, response, next) {
+app.post('/auth', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body);
 
@@ -106,7 +113,7 @@ app.post('/auth', function(request, response, next) {
                 });
                 console.log("Successfully logged in.");
                 console.log(`Welcome back, ${request.session.username}!`);
-                console.log(request.sessionID)
+                //console.log(request.sessionID)
                 response.end();
                 //response.status(200).end('OK');
                 //response.redirect('http://localhost:3000/profile');
@@ -129,23 +136,27 @@ app.post('/auth', function(request, response, next) {
 	}
 });
 
-app.post('/logout', function(request, response) {
+app.post('/logout', function(request, response, next) {
+    request.session.loggedin = false;
+    //let SID = request.sessionID;
     let login = request.session.loggedin;
-    request.session.destroy();
+    request.session.destroy()
     response.send({
         status: "Successfully logged out (FROM BACKEND)",
         login
     })
-    console.log("Successfully logged out (BACKEND)")
+    console.log("Successfully logged out (BACKEND)");
+    //console.log(SID);
+    //console.log(login);
     response.end();
 });
 
 app.post('/profile', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
-    console.log(request.session.loggedin)
-    console.log(request.sessionID)
-	let name = request.body.name;
+    //console.log(request.session.loggedin)
+    //console.log(request.sessionID)
+	let fullname = request.body.name;
 	let address = request.body.address;
 	let address2 = request.body.address2;
 	let city = request.body.city;
@@ -154,7 +165,7 @@ app.post('/profile', function(request, response) {
 
 	if (request.session.loggedin) {
 		try{
-			connection.promise().query(`INSERT INTO ClientInformation (name, address, address2, city, state, zipcode) VALUES('${name}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}') `);
+			connection.promise().query(`INSERT INTO ClientInformation (fullname, address, address2, city, state, zipcode) VALUES('${fullname}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}') `);
 			response.status(201).send({
                 status: 'Information saved.' 
             });
