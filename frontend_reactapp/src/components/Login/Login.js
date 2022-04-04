@@ -13,13 +13,14 @@ const Login = () => {
         const options = {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
+            credentials: "include",
             body: JSON.stringify(loginData)
         };
 
-        const response = await fetch('http://localhost:5000/auth', options)
+        const response = await fetch('/auth', options)
         const jsonData = await response.json();
         
-        if (jsonData.loggedin) { //if login status is successful
+        if (jsonData.login) { //if login status is true/successful
             console.log(jsonData);
             history.push('/profile') //redirect to profile page
         }

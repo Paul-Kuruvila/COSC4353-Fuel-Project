@@ -31,7 +31,7 @@ const FuelQuote = () => {
       console.log(response);
     });*/
     
-    const response = await fetch('http://localhost:5000/fuelquotemodule', options);
+    const response = await fetch('/fuelquotemodule', options);
     const jsonData = await response.json();
     console.log(jsonData);
   }

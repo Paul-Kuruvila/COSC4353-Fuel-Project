@@ -1,7 +1,9 @@
 import './Registration.css';
 import React, {useEffect, useState} from 'react';
+import {useHistory} from "react-router-dom";
 
 const Registration = () => {
+    const history = useHistory();
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
 
@@ -14,9 +16,16 @@ const Registration = () => {
             body: JSON.stringify(registerData)
         };
         
-        const response = await fetch('http://localhost:5000/register', options);
+        const response = await fetch('/register', options);
         const jsonData = await response.json();
-        console.log(jsonData);
+        
+        if (jsonData.registered) { //if registration is successful
+            console.log(jsonData);
+            history.push('/login') //redirect to profile page
+        }
+        else {
+            console.log(jsonData);
+        }
   }
   return (
       <div className="register">

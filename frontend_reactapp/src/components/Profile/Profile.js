@@ -1,7 +1,9 @@
 import './Profile.css';
 import React, {useEffect, useState} from 'react';
+import {useHistory} from "react-router-dom";
 
 const Profile = () => {
+    const history = useHistory();
     const [name, setName] = useState();
     const [address, setAddress] = useState();
     const [address2, setAddress2] = useState();
@@ -19,12 +21,36 @@ const Profile = () => {
         const options = {
             method: 'POST',
             headers: {"Content-Type": "application/json"},
+            credentials: "include",
             body: JSON.stringify(profileData)
         };
 
-        const response = await fetch('http://localhost:5000/profile', options);
+        const response = await fetch('/profile', options);
         const jsonData = await response.json();
         console.log(jsonData);
+    }
+
+    const handleLogout = async(e) => { //sending data
+        e.preventDefault();
+
+        //const profileData = {name, address, address2, city, state, zipcode};
+        const options = {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            credentials: "include"
+            //body: JSON.stringify(profileData)
+        };
+
+        const response = await fetch('/logout', options);
+        const jsonData = await response.json();
+
+        if (jsonData.login == false) { //if login status is false
+            console.log(jsonData);
+            history.push('/login') //redirect to profile page
+        }
+        else {
+            console.log(jsonData);
+        }
   }
 
   return (
@@ -133,6 +159,13 @@ const Profile = () => {
                     </div>
                 </li>
             </ul>
+        </form>
+        <form onSubmit = {handleLogout}>
+            <div className = "logoutButton">
+                <a href="\login">
+                <button className="Submit" type="submit">Logout</button>
+                </a>
+            </div>
         </form>
       </div>
   );

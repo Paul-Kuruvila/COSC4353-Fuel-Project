@@ -18,17 +18,19 @@ const connection = mysql.createConnection({
 });
 
 const app = express();
-
 app.use(cors());
-
+//app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
 app.use(session({
 	secret: 'secret',
-	resave: true,
-	saveUninitialized: true
+	saveUninitialized: false,
+    resave: false,
+    cookie: {secure: false}
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'static')));
+
+
 
 
 app.get('/', function(request, response) {//ignore for now
@@ -39,19 +41,26 @@ app.get('/', function(request, response) {//ignore for now
 app.post('/register', function(request, response){
 	let username = request.body.username;
 	let password = request.body.password;
+    let registered = false;
 
 	if(username && password){
 		connection.query(`SELECT * FROM UserCredentials WHERE username = '${username}'`, function(error, results, fields) {
 			if(error) throw error;
 			
 			if (results.length > 0){
-				response.json('Account name is already taken. (FRONTEND)');
+				response.send({
+                    status: 'Account name is already taken. (FROM BACKEND)'
+                });
 				console.log("Account name is already taken. (BACKEND)");
 			} else {
 				try{
 					// encrypt password using SHA2-256 hash function
 					connection.promise().query(`INSERT INTO UserCredentials (username, password) VALUES('${username}', SHA2('${password}', 256))`);
-					response.status(201).send({ msg: 'Account created. (FRONTEND)' });
+					registered = true;
+                    response.status(201).send({
+                        status: 'Account created. (FROM BACKEND)',
+                        registered
+                    });
 					console.log("Account created. (BACKEND)");
 				}
 				catch(err){
@@ -64,11 +73,15 @@ app.post('/register', function(request, response){
 	}
 });
 
-app.post('/auth', function(request, response) {
-	// Capture the input fields
+app.post('/auth', function(request, response, next) {
+    //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body);
+
+	// Capture the input fields
 	let username = request.body.username;
 	let password = request.body.password;
+    let login;
+    let SID;
 
 	// Ensure the input fields exists and are not empty
 	if (username && password) {
@@ -80,33 +93,58 @@ app.post('/auth', function(request, response) {
 			// If the account exists
 			if (results.length > 0) {
 				// Authenticate the user
+                //loggedin = true;
 				request.session.loggedin = true;
 				request.session.username = username;
-				// Redirect to home page
-                response.json({
-                    loggedin: 'Successfully logged in. (FRONTEND)'
+                login = request.session.loggedin;
+                SID = request.sessionID;
+                //request.session.save()
+                response.send({
+                    status: 'Successfully logged in. (FROM BACKEND)',
+                    login,
+                    //SID
                 });
-                //response.status(200).end('OK');
+                console.log("Successfully logged in.");
+                console.log(`Welcome back, ${request.session.username}!`);
+                console.log(request.sessionID)
                 response.end();
+                //response.status(200).end('OK');
                 //response.redirect('http://localhost:3000/profile');
                 //response.writeHead(301, {Location: `http://localhost:3000/profile`}).end();
-				console.log("Successfully logged in.");
+
 			} else {
-				response.json('Incorrect Username and/or Password! (FRONTEND)');
+				response.send({
+                    status: 'Incorrect Username and/or Password! (FROM BACKEND)',
+                });
 				console.log("Incorrect Username and/or Password! (BACKEND)");
 			}			
 			response.end();
 		});
 	} else {
-		response.json('Please enter Username and Password!');
+		response.send({
+            status: 'Please enter Username and Password! (FROM BACKEND)'
+        });
+        console.log("Please enter Username and Password! (BACKEND)");
 		response.end();
 	}
+});
 
+app.post('/logout', function(request, response) {
+    let login = request.session.loggedin;
+    request.session.destroy();
+    response.send({
+        status: "Successfully logged out (FROM BACKEND)",
+        login
+    })
+    console.log("Successfully logged out (BACKEND)")
+    response.end();
 });
 
 app.post('/profile', function(request, response) {
-	// If the user is loggedin /WILL BE UTILIZING MYSQL
+    //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
+    console.log(request.session.loggedin)
+    console.log(request.sessionID)
 	let name = request.body.name;
 	let address = request.body.address;
 	let address2 = request.body.address2;
@@ -115,12 +153,11 @@ app.post('/profile', function(request, response) {
 	let zipcode = request.body.zipcode;
 
 	if (request.session.loggedin) {
-		// Output username
-		//response.send('Welcome back, ' + request.session.username + '!');
-		console.log(`Welcome back, ${request.session.username}!`);
 		try{
 			connection.promise().query(`INSERT INTO ClientInformation (name, address, address2, city, state, zipcode) VALUES('${name}', '${address}', '${address2}', '${city}', '${state}', '${zipcode}') `);
-			response.status(201).send({ msg: 'Information saved.' });
+			response.status(201).send({
+                status: 'Information saved.' 
+            });
 			console.log("Information saved.");
 		}
 		catch(err){
@@ -128,12 +165,11 @@ app.post('/profile', function(request, response) {
 			console.log("Information was not saved.");
 		}
 	} else {
-		// Not logged in
-		//response.send('Please login to view this page!');
-        response.json("Please login to view this page! (FRONTEND)")
+        response.send({
+            status: "Please login to view this page! (FROM BACKEND)"
+        })
 		console.log("Please login to view this page!");
 	}
-	
 	response.end();
 
     
