@@ -14,7 +14,7 @@ const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
 	password : 'admin',
-	database : 'nodelogin'
+	database : 'fuelio'
 });
 
 const app = express();
@@ -39,7 +39,7 @@ app.get('/', function(request, response) {//ignore for now
 });
 
 app.get("/fuelquote", (request, response) => {
-    connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM nodelogin.ClientInformation`, (err, results) => {
+    connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation`, (err, results) => {
         if (err) throw err;
         response.send(results);
         console.log(results);
@@ -139,7 +139,6 @@ app.post('/auth', function(request, response) {
                 //response.status(200).end('OK');
                 //response.redirect('http://localhost:3000/profile');
                 //response.writeHead(301, {Location: `http://localhost:3000/profile`}).end();
-
 			} 
             else {
 				response.send({
