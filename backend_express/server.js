@@ -6,6 +6,7 @@ const path = require('path');
 const port = 5000;
 const loginData = require('./data/db.json')
 
+
 const fs = require('fs');
 let filedata = fs.readFileSync('./data/db.json');
 let userData = JSON.parse(filedata);
@@ -13,8 +14,8 @@ let userData = JSON.parse(filedata);
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'admin',
-	database : 'nodelogin'
+	password : 'password',
+	database : 'fuelio'
 });
 
 const app = express();
@@ -38,6 +39,17 @@ app.get('/', function(request, response) {//ignore for now
 	response.sendFile(path.join(__dirname + '/login'));
 });
 
+function testreg(registered) {
+	if (registered == true) {
+		return "Account created. (BACKEND)";
+	}
+	else {
+		return "Error";
+	}
+}
+
+//module.exports = testreg;
+
 app.post('/register', function(request, response){
 	let username = request.body.username;
 	let password = request.body.password;
@@ -57,6 +69,7 @@ app.post('/register', function(request, response){
 					// encrypt password using SHA2-256 hash function
 					connection.promise().query(`INSERT INTO UserCredentials (username, password) VALUES('${username}', SHA2('${password}', 256))`);
 					registered = true;
+					const testreg = testreg(registered);
                     response.status(201).send({
                         status: 'Account created. (FROM BACKEND)',
                         registered
@@ -71,7 +84,18 @@ app.post('/register', function(request, response){
 			response.end();
 		});	
 	}
+
 });
+
+function testlog(loggedin) {
+	if (loggedin == true) {
+		return "Successfully logged in. (FROM BACKEND)";
+	}
+	else {
+		return "Error";
+	}
+}
+//module.exports = testlog;
 
 app.post('/auth', function(request, response, next) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
@@ -98,6 +122,8 @@ app.post('/auth', function(request, response, next) {
 				request.session.username = username;
                 login = request.session.loggedin;
                 SID = request.sessionID;
+				const testlog = testlog(request.session.loggedin);
+
                 //request.session.save()
                 response.send({
                     status: 'Successfully logged in. (FROM BACKEND)',
@@ -105,6 +131,7 @@ app.post('/auth', function(request, response, next) {
                     //SID
                 });
                 console.log("Successfully logged in.");
+				//return "Successfully logged in.";
                 console.log(`Welcome back, ${request.session.username}!`);
                 console.log(request.sessionID)
                 response.end();
@@ -129,6 +156,16 @@ app.post('/auth', function(request, response, next) {
 	}
 });
 
+function testlogout(out) {
+	if (out == false) {
+		return "Successfully logged out (FROM BACKEND)";
+	}
+	else {
+		return "Error";
+	}
+}
+//module.exports = testlogout;
+
 app.post('/logout', function(request, response) {
     let login = request.session.loggedin;
     request.session.destroy();
@@ -137,15 +174,29 @@ app.post('/logout', function(request, response) {
         login
     })
     console.log("Successfully logged out (BACKEND)")
+	request.session.loggedin = false;
+	testlogout(request.session.loggedin);
+	//return "Successfully logged out (BACKEND)";
     response.end();
 });
 
+function testprof(file) {
+	if (file == true) {
+		return "Information saved.";
+	}
+	else {
+		return "Error";
+	}
+}
+module.exports = testprof;
+var name;
 app.post('/profile', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
     console.log(request.session.loggedin)
     console.log(request.sessionID)
-	let name = request.body.name;
+	name = request.body.name;
+	//request.session.name = name;
 	let address = request.body.address;
 	let address2 = request.body.address2;
 	let city = request.body.city;
@@ -158,7 +209,12 @@ app.post('/profile', function(request, response) {
 			response.status(201).send({
                 status: 'Information saved.' 
             });
+			if (connection.promise().query(`SELECT * FROM ClientInformation WHERE ClientInformation.name = VARCHAR()`)) {
+				const testprof = testprof(true)
+			}
+
 			console.log("Information saved.");
+			//return "Client information saved.";
 		}
 		catch(err){
 			console.log(err);
@@ -183,11 +239,50 @@ app.post('/profile', function(request, response) {
 
 });
 
+function testfuel(fuel) {
+	if (fuel == true) {
+		return "Fuel quote form was successfully generated.";
+	}
+	else {
+		return "Error";
+	}
+}
+//module.exports = testfuel;
 app.post("/fuelquotemodule", (req, res) => { //retrieve
     console.log('Retrieving data from frontend')
     console.log(req.body);
 
     const data = req.body;
+	let request = req.body.request;
+	let date = req.body.date;
+	
+	let price = req.body.price;
+	let cost = req.body.cost;
+	let address = req.body.address;
+	let address2 = req.body.address2;
+	let city = req.body.city;
+	let state = req.body.state;
+	let zipcode = req.body.zipcode;
+
+	if (request && date) {
+		try {
+			connection.promise().query(`INSERT INTO FuelQuote (address,address2,city,state,zipcode) SELECT address,address2,city,state,zipcode FROM ClientInformation WHERE name = ?`, [name]);
+			connection.promise().query(`INSERT INTO FuelQuote (request,date) VALUES('${request}', '${date}')`);
+			//res.status(201).send({msg: 'Created User'});
+
+			console.log("Fuel quote form was successfully generated.");
+			if (connection.promise().query(`SELECT * FROM ClientInformation,FuelQuote WHERE ClientInformation.address = FuelQuote.address`)) {
+				const testfuel = testfuel(true)
+			}
+			
+			//return "Fuel quote form was successfully generated."
+			console.log("BYE2")
+		}
+		catch (err) {
+			console.log(err);
+			console.log("Fuel quote form was not generated.");
+		}
+	}
 
     //console.log(userData);
     
@@ -206,3 +301,5 @@ app.post("/pricingmodule", (req, res) => { //retrieve
 })
 
 app.listen(port, () => {console.log(`Server started on port ${port}`)});
+
+
