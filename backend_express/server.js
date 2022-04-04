@@ -6,7 +6,6 @@ const path = require('path');
 const port = 5000;
 const loginData = require('./data/db.json')
 
-
 const fs = require('fs');
 let filedata = fs.readFileSync('./data/db.json');
 let userData = JSON.parse(filedata);
@@ -14,8 +13,8 @@ let userData = JSON.parse(filedata);
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'password',
-	database : 'fuelio'
+	password : 'admin',
+	database : 'nodelogin'
 });
 
 const app = express();
@@ -39,16 +38,20 @@ app.get('/', function(request, response) {//ignore for now
 	response.sendFile(path.join(__dirname + '/login'));
 });
 
-function testreg(registered) {
-	if (registered == true) {
-		return "Account created. (BACKEND)";
-	}
-	else {
-		return "Error";
-	}
-}
-
-//module.exports = testreg;
+app.get("/fuelquote", (request, response) => {
+    connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM nodelogin.ClientInformation`, (err, results) => {
+        if (err) throw err;
+        response.send(results);
+        console.log(results);
+    });
+    /*response.send({
+        address: "Calhoun Road",
+        address2: "",
+        city: "Houston",
+        state: "Texas",
+        zipcode: "77204"
+    })*/
+})
 
 app.post('/register', function(request, response){
 	let username = request.body.username;
@@ -76,7 +79,6 @@ app.post('/register', function(request, response){
 					// encrypt password using SHA2-256 hash function
 					connection.promise().query(`INSERT INTO UserCredentials (username, password) VALUES('${username}', SHA2('${password}', 256))`);
 					registered = true;
-					const testreg = testreg(registered);
                     response.status(201).send({
                         status: 'Account created. (FROM BACKEND)',
                         registered
@@ -91,20 +93,9 @@ app.post('/register', function(request, response){
 			response.end();
 		});	
 	}
-
 });
 
-function testlog(loggedin) {
-	if (loggedin == true) {
-		return "Successfully logged in. (FROM BACKEND)";
-	}
-	else {
-		return "Error";
-	}
-}
-//module.exports = testlog;
-
-app.post('/auth', function(request, response, next) {
+app.post('/auth', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body);
 
@@ -135,8 +126,6 @@ app.post('/auth', function(request, response, next) {
 				request.session.username = username;
                 login = request.session.loggedin;
                 SID = request.sessionID;
-				const testlog = testlog(request.session.loggedin);
-
                 //request.session.save()
                 response.send({
                     status: 'Successfully logged in. (FROM BACKEND)',
@@ -144,7 +133,6 @@ app.post('/auth', function(request, response, next) {
                     //SID
                 });
                 console.log("Successfully logged in.");
-				//return "Successfully logged in.";
                 console.log(`Welcome back, ${request.session.username}!`);
                 //console.log(request.sessionID)
                 response.end();
@@ -170,40 +158,21 @@ app.post('/auth', function(request, response, next) {
 	}
 });
 
-function testlogout(out) {
-	if (out == false) {
-		return "Successfully logged out (FROM BACKEND)";
-	}
-	else {
-		return "Error";
-	}
-}
-//module.exports = testlogout;
-
-app.post('/logout', function(request, response) {
+app.post('/logout', function(request, response, next) {
+    request.session.loggedin = false;
+    let SID = request.sessionID;
     let login = request.session.loggedin;
     request.session.destroy()
     response.send({
         status: "Successfully logged out (FROM BACKEND)",
         login
     })
-    console.log("Successfully logged out (BACKEND)")
-	request.session.loggedin = false;
-	testlogout(request.session.loggedin);
-	//return "Successfully logged out (BACKEND)";
+    console.log("Successfully logged out (BACKEND)");
+    //console.log(SID);
+    //console.log(login);
     response.end();
 });
 
-function testprof(file) {
-	if (file == true) {
-		return "Information saved.";
-	}
-	else {
-		return "Error";
-	}
-}
-module.exports = testprof;
-var name;
 app.post('/profile', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
@@ -235,12 +204,7 @@ app.post('/profile', function(request, response) {
                 login,
                 savedInfo
             });
-			if (connection.promise().query(`SELECT * FROM ClientInformation WHERE ClientInformation.name = VARCHAR()`)) {
-				const testprof = testprof(true)
-			}
-
 			console.log("Information saved.");
-			//return "Client information saved.";
 		}
 		catch(err){
 			console.log(err);
@@ -312,5 +276,3 @@ app.post("/pricingmodule", (req, res) => { //retrieve
 })
 
 app.listen(port, () => {console.log(`Server started on port ${port}`)});
-
-
