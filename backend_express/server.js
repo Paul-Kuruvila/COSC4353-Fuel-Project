@@ -53,7 +53,7 @@ app.post('/register', function(request, response){
                 });
 				console.log("Account name is already taken. (BACKEND)");
 			}
-            else if (request.session.loggedin = true) {
+            else if (request.session.loggedin == true) {
                 response.send({
                     status: 'Already logged in. (FROM BACKEND)'
                 });
