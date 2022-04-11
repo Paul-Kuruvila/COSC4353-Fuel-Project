@@ -85,6 +85,9 @@ header{
 }
 
 .options{
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: 15px;
   list-style: none;
   background-color: rgba(0, 0, 0, 0.2);
 }
