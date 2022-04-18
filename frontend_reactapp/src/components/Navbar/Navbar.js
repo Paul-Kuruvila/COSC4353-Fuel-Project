@@ -5,7 +5,7 @@ function Navbar() {
     return (
         <header id="navbar">
             <h1 className = "title"><a href="/">Fuel.io</a></h1>
-            <nav>
+            <nav className="bar">
                 <ul className="options">
                     <li><a href="/login">Login</a></li>
                     <li><a href="/register">Register</a></li>
