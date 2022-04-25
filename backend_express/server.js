@@ -7,13 +7,14 @@ const port = 5000;
 const loginData = require('./data/db.json')
 
 const fs = require('fs');
+const e = require('cors');
 let filedata = fs.readFileSync('./data/db.json');
 let userData = JSON.parse(filedata);
 
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'admin',
+	password : 'password',
 	database : 'fuelio'
 });
 
@@ -42,7 +43,22 @@ app.get("/fuelquote", (request, response) => {
     connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation`, (err, results) => {
         if (err) throw err;
         response.send(results);
-        console.log(results);
+        //console.log(results);
+    });
+    /*response.send({
+        address: "Calhoun Road",
+        address2: "",
+        city: "Houston",
+        state: "Texas",
+        zipcode: "77204"
+    })*/
+})
+app.get("/pricingmodule", (request, response) => {
+    let username = request.session.username;
+    connection.query(`SELECT totalcost FROM PricingMod WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = PricingMod.userid`, (err, results) => { //WHERE userid = 
+        if (err) throw err;
+        response.send(results);
+        //console.log(results);
     });
     /*response.send({
         address: "Calhoun Road",
@@ -232,19 +248,72 @@ app.post("/fuelquotemodule", (request, response) => {
     console.log('Retrieving data from frontend');
     let fuel_request = request.body.request;
     let fuel_date = request.body.date;
-    let fuel_price = 2.5;
-    let fuel_cost = (fuel_request * fuel_price).toFixed(2);
+    let fuel_price = 1.5;
+	let reqFact;
+    let inState;
+    let histFact;
+	let compprofit = 0.1;
+    /*if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
+        histFact = 0.01;
+        console.log(histFact);
+    }
+    else {
+        histFact = 0;
+        console.log(histFact);
+    }
+	if (fuel_request > 1000) {
+		reqfact = 0.02;
+	}
+	else if (fuel_request < 1000) {
+		reqfact = 0.03;
+	}
 
+    if (request.body.state == 'TX') {
+        inState = 0.02;
+    }
+    else {
+        inState = 0.04;
+    }*/
+    //let margin = fuel_price * (inState - )
+    
     let login = request.session.loggedin;
     let savedInfo = false;
 
     if (request.session.loggedin) {
 		try{
-			connection.promise().query(
+            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
+                histFact = 0.01;
+                console.log(histFact);
+            }
+            else {
+                histFact = 0;
+                console.log(histFact);
+            }
+            if (fuel_request > 1000) {
+                reqFact = 0.02;
+            }
+            else if (fuel_request < 1000) {
+                reqFact = 0.03;
+            }
+        
+            if (request.body.state == 'TX') {
+                inState = 0.02;
+            }
+            else {
+                inState = 0.04;
+            }
+            let margin = fuel_price * (inState - histFact + reqFact + compprofit);
+            let perGal = fuel_price + margin;
+            let fuel_cost = (fuel_request * perGal).toFixed(2);
+            connection.promise().query(`INSERT INTO PricingMod (userid,totalcost) VALUES((SELECT userid FROM UserCredentials WHERE username = '${request.session.username}'),'${fuel_cost}')`);
+            console.log(fuel_cost);
+
+            connection.promise().query(
                 `INSERT INTO FuelQuote (userid, request, date, price, cost)  
                 VALUES((SELECT userid FROM UserCredentials WHERE username = '${request.session.username}'), 
-                '${fuel_request}', '${fuel_date}', '${fuel_price}', '${fuel_cost}')`
+                '${fuel_request}', '${fuel_date}', '${fuel_price}', '${fuel_cost}')` //remove unique key for duplicates?
             );
+                
 			
             savedInfo = true;
             response.status(201).send({
@@ -270,8 +339,22 @@ app.post("/fuelquotemodule", (request, response) => {
     });*/
 })
 
-app.post("/pricingmodule", (req, res) => { //retrieve
+/*app.get("/fuelquotehist", (request, response) => {
+    connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation`, (err, results) => {
+        if (err) throw err;
+        response.send(results);
+        console.log(results);
+    });
+    response.send({
+        address: "Calhoun Road",
+        address2: "",
+        city: "Houston",
+        state: "Texas",
+        zipcode: "77204"
+    })
+})*/
+/*app.post("/pricingmodule", (req, res) => { //retrieve
     
-})
+})*/
 
 app.listen(port, () => {console.log(`Server started on port ${port}`)});

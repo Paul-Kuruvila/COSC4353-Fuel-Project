@@ -8,7 +8,7 @@ const FuelQuote = () => {
 
   const [request, setRequest] = useState();
   const [date, setDate] = useState();
-  const [price, setPrice] = useState('2.50');
+  const [price, setPrice] = useState('1.50');
   var [cost, setCost] = useState();
 
   var [fullname, setName] = useState();
@@ -17,6 +17,7 @@ const FuelQuote = () => {
   var [City, setCity] = useState();
   var [State, setState] = useState();
   var [Zipcode, setZipcode] = useState();
+  const [totalcost, setFuelCost] = useState();
 
   const [backendData, setBackendData] = useState([{}]);
 
@@ -37,6 +38,20 @@ const FuelQuote = () => {
   }
 
   backend();
+
+  async function backend2() {
+    const response = await fetch('/pricingmodule')
+    const jsonData = await response.json();
+    console.log(jsonData);
+    //console.log("hello");
+    setFuelCost(jsonData[jsonData.length-1].totalcost);
+
+    const priceData = {totalcost};
+    console.log(priceData);
+  }
+
+  backend2();
+
   
   const handleSubmit = async(e) => { //sending data
     e.preventDefault();
@@ -76,7 +91,7 @@ const FuelQuote = () => {
                 value={request}
                 onChange = {(e) => setRequest(e.target.value)}
               />
-              <label className = "datelabel">Delivery Date:</label>
+              <label className = "datelabel">Delivery Date</label>
               <input className = "date"
                 type="date" 
                 name="trip-start"
@@ -101,7 +116,8 @@ const FuelQuote = () => {
                 type = "number"
                 min="0.01"
                 step="0.01"
-                value={(request * price).toFixed(2)}
+                value={totalcost}
+                //onChange = {(e) => setFuelCost(e.target.value)}
               />
         </div>
         <div className = "delAddress">
@@ -150,7 +166,6 @@ const FuelQuote = () => {
             />
         </div>
         <button onClick>Generate</button>
-      
       </form>
       <a href = "\fuelquotehistory">
       <button type = "button">Quote History</button>
@@ -184,6 +199,11 @@ const FuelQuote = () => {
       console.log('new quote added')
     })
     
+    //<div classname = "getquote"> 
+
+        <button type = "button"> Get Quote </button>
+      
+      </div>
   }*/
 
 export default FuelQuote;
