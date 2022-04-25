@@ -12,7 +12,45 @@ const Profile = () => {
     const [zipcode, setZipcode] = useState();
 
     const [backendData, setBackendData] = useState([{}]);
-  
+    var editState = {
+        name: false,
+        address: false,
+        address2: false,
+        city: false,
+        state: false,
+        zipcode: false
+    };
+
+    function editFields() {
+        let fields = ['name','address','address2','city','state','zipcode'];
+        for(let i=0; i < fields.length; i++){
+            document.getElementById(fields[i]).removeAttribute('readonly');
+        }
+        //document.getElementById('state').removeAttribute('disabled');
+    }
+
+    async function backend() {
+        const response = await fetch('/profile');
+        const jsonData = await response.json();
+        
+        setBackendData(jsonData);
+        setName(jsonData[0].fullname);
+        setAddress(jsonData[0].address);
+        if(jsonData[0].address2 != "undefined")
+            setAddress2 (jsonData[0].address2);
+        setCity(jsonData[0].city);
+        setState(jsonData[0].state);
+        setZipcode(jsonData[0].zipcode);
+        // console.log(jsonData);
+        // //console.log(jsonData.address);
+        // if(jsonData[0].fullname == undefined)
+        //     editState = "true";
+        // const clientData = {name, address, address2, city, state, zipcode};
+        //console.log(jsonData);
+        //console.log(clientData); // data from db->backend->frontend(here)
+    }
+    backend();
+
     const handleSubmit = async(e) => { //sending data
         e.preventDefault();
         state = document.getElementById('state').value;
@@ -65,36 +103,44 @@ const Profile = () => {
             <ul className="signup-boxes">
                 <li>
                     <label className="">Full Name</label>
-                    <input className="inputbox" type="text" required placeholder="Enter your first and last name."
+                    <input className="inputbox" id="name" type="text" required placeholder="Enter your first and last name."
                     value = {name}
                     onChange = {(e) => setName(e.target.value)}
+                    readOnly="readonly"
                     />
+                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>Address 1</label>
-                    <input className="inputbox" type="text" required placeholder="Enter your address."
+                    <input className="inputbox" id="address" type="text" required placeholder="Enter your address."
                     value = {address}
                     onChange = {(e) => setAddress(e.target.value)}
+                    readOnly="readonly"
                     />
+                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>Address 2</label>
-                    <input className="inputbox" type="text" placeholder="Enter your address, if applicable."
+                    <input className="inputbox" id="address2" type="text" placeholder="Enter your address, if applicable."
                     value = {address2}
                     onChange = {(e) => setAddress2(e.target.value)}
+                    readOnly="readonly"
                     />
+                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>City</label>
-                    <input className="inputbox" type="text" required placeholder="Enter the name of your city."
+                    <input className="inputbox" id="city" type="text" required placeholder="Enter the name of your city."
                     value = {city}
                     onChange = {(e) => setCity(e.target.value)}
+                    readOnly="readonly"
                     />
+                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>State</label>
-                    <select className="inputbox" id="state" name="state">
-                        <option value="" selected>Select a state</option>
+                    <select className="inputbox" id="state" name="state" defaultValue={""} value={state} readOnly={true}>
+                        <option value="">Select a state</option>
                         <option value="AL">AL</option>
                         <option value="AK">AK</option>
                         <option value="AR">AR</option>    
@@ -146,15 +192,17 @@ const Profile = () => {
                         <option value="WI">WI</option>    
                         <option value="WV">WV</option>
                         <option value="WY">WY</option>
-                    value = {state}
                     </select>
+                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>Zipcode</label>
-                    <input className="inputbox" type="text" required placeholder="Enter your zipcode."
+                    <input className="inputbox" id="zipcode" type="text" required placeholder="Enter your zipcode."
                     value = {zipcode}
                     onChange = {(e) => setZipcode(e.target.value)}
+                    readOnly="readonly"
                     />
+                    <div onClick={() => editFields()} className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <div className = "submitbutton">

@@ -88,3 +88,16 @@
 .profile button:hover {
     background-color: rgb(195, 195, 125);
 }
+
+.editbutton{
+    display:inline;
+    font-size: 12pt;
+    margin-left: 10px;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.editbutton:hover{
+    color: purple;
+}

@@ -14,7 +14,7 @@ let userData = JSON.parse(filedata);
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'password',
+	password : 'admin',
 	database : 'fuelio'
 });
 
@@ -146,6 +146,7 @@ app.post('/auth', function(request, response) {
                 response.send({
                     status: 'Successfully logged in. (FROM BACKEND)',
                     login,
+                    username
                     //SID
                 });
                 console.log("Successfully logged in.");
@@ -188,12 +189,32 @@ app.post('/logout', function(request, response, next) {
     response.end();
 });
 
+app.get('/profile', function(request, response) {
+    // let username = request.session.username;
+
+    // if (request.session.loggedin) {
+    //     console.log(`Attempting to retrieve stored information for ${username}...`);
+    //     connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
+    //         if (err) throw err;
+    //         response.send(results);
+    //         console.log(results);
+    //     });
+    // } else {
+    //     response.send({
+    //         status: "Please login to view this page! (FROM BACKEND)"
+    //     })
+	// 	console.log("Please login to view this page!");
+	// }
+
+    console.log("Currently infinite looping (fetching data from MySQL database), so I have commented out.");
+})
+
 app.post('/profile', function(request, response) {
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
     //console.log(request.session.loggedin)
     //console.log(request.sessionID)
-    let username = request.session.username
+    let username = request.session.username;
 	let fullname = request.body.name;
 	let address = request.body.address;
 	let address2 = request.body.address2;

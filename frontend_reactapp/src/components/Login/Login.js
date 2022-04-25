@@ -35,14 +35,12 @@ const Login = () => {
                     <li>
                         <label className="userLabel">Username:</label>
                         <input id="username" className="inputbox" type="text" title="Please enter your username." required placeholder="Enter your username."
-                        value = {username}
                         onChange = {(e) => setUsername(e.target.value)}
                         />
                     </li>
                     <li>
                         <label className="passLabel">Password:</label>
                         <input id="password" className="inputbox" type="password" title="Please enter your password." required placeholder="Enter your password."
-                        value = {password}
                         onChange = {(e) => setPassword(e.target.value)}
                         />
                     </li>
@@ -51,7 +49,8 @@ const Login = () => {
                     </li>
                     <div className="signup-text">
                         <p>Don't have an account?
-                        <a href="/register">Sign up here</a>.</p>
+                            <a href="/register">Sign up here</a>.
+                        </p>
                     </div>
                 </ul>
             </form>

@@ -129,8 +129,14 @@ header{
   width:225px;
 }
 
+.signup-text a::before{
+  margin-left: -20px;
+  content: "\A";
+  white-space:pre;
+}
+
 .signup-text a{
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .signup-text a{
