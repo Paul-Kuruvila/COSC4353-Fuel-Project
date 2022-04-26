@@ -435,7 +435,7 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 
     if (request.session.loggedin) {
 		try{
-            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
+            if (connection.promise().query(`SELECT EXISTS (SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
                 histFact = 0.01;
                 console.log(histFact);
             }
@@ -468,7 +468,6 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
                 '${fuel_request}', '${fuel_date}', '${fuel_price}', '${fuel_cost}')` //remove unique key for duplicates?
             );
                 
-			
             savedInfo = true;
             response.status(201).send({
                 status: 'Fuel quote created.', 
@@ -489,14 +488,11 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 		console.log("Please login to view this page!");
 	}
 	response.end();
-    /*connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM nodelogin.ClientInformation`, function (err, results) {
-        return console.log(results)
-    });*/
 })
 
 app.get("/fuelquotehist", (request, response) => {
     let username = request.session.username;
-    connection.query(`SELECT request, date, address, city, state, zipcode, price, cost FROM ClientInformation, FuelQuote WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
+    connection.query(`SELECT fullname, address, address2, city, state, zipcode, request, date, price, cost FROM ClientInformation, FuelQuote WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
         if (err) throw err;
         response.send(results);
         console.log(results);
