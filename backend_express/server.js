@@ -11,7 +11,6 @@ const e = require('cors');
 let filedata = fs.readFileSync('./data/db.json');
 let userData = JSON.parse(filedata);
 
-
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
@@ -34,92 +33,22 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 
 
-
 app.get('/', function(request, response) {//ignore for now
 	// Render login template
 	response.sendFile(path.join(__dirname + '/login'));
 });
 
-app.get("/fuelquote", (request, response) => {
-    connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation`, (err, results) => {
-        if (err) throw err;
+app.get("/loginstatus", (request, response) => {
+    let username = request.session.username;
+    let login = false;
+    if (username != null) {
+        login = true;
+    }
 
-        var data;
-        data = results[0];
-        response.send(data);
-        //console.log(data);
-    });
-    /*response.send({
-        address: "Calhoun Road",
-        address2: "",
-        city: "Houston",
-        state: "Texas",
-        zipcode: "77204"
-    })*/
-})
-app.post("/pricingmodulecost", (request, response) => {
-    let fuel_request = request.body.request;
-    let fuel_price = 1.5;
-	let reqFact;
-    let inState;
-    let histFact;
-	let compprofit = 0.1;
-
-    let login = request.session.loggedin;
-    let savedInfo = false;
-
-    if (request.session.loggedin) {
-		try{
-            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
-                histFact = 0.01;
-                //console.log(histFact);
-            }
-            else {
-                histFact = 0;
-                //console.log(histFact);
-            }
-            if (fuel_request > 1000) {
-                reqFact = 0.02;
-            }
-            else if (fuel_request < 1000) {
-                reqFact = 0.03;
-            }
-        
-            if (request.body.state == 'TX') {
-                inState = 0.02;
-            }
-            else {
-                inState = 0.04;
-            }
-            let margin = fuel_price * (inState - histFact + reqFact + compprofit);
-            let perGal = fuel_price + margin;
-            let fuel_cost = (fuel_request * perGal).toFixed(2);
-            
-            console.log(fuel_cost);            
-			
-            savedInfo = true;
-            response.status(201).send({
-                status: 'Fuel quote created.', 
-                login,
-                savedInfo,
-                cost: fuel_cost
-            });
-			console.log("Fuel quote created.");
-		}
-		catch(err){
-			console.log(err);
-			console.log("Fuel quote could not be created.");
-		}
-	} else {
-        response.send({
-            status: "Please login to view this page! (FROM BACKEND)"
-        })
-		console.log("Please login to view this page!");
-	}
-	response.end();
+    response.send([username,login]);
 })
 
-app.post('/register', function(request, response){
+app.post('/register', function(request, response){ //registering users
 	let username = request.body.username;
 	let password = request.body.password;
     let registered = false;
@@ -128,17 +57,17 @@ app.post('/register', function(request, response){
 		connection.query(`SELECT * FROM UserCredentials WHERE username = '${username}'`, function(error, results, fields) {
 			if(error) throw error;
 			
-			if (results.length > 0){
+			if (request.session.loggedin == true){
 				response.send({
-                    status: 'Account name is already taken. (FROM BACKEND)'
-                });
-				console.log("Account name is already taken. (BACKEND)");
-			}
-            else if (request.session.loggedin == true) {
-                response.send({
                     status: 'Already logged in. (FROM BACKEND)'
                 });
 				console.log("Already logged in. (BACKEND)");
+			}
+            else if (results.length > 0) {
+                response.send({
+                    status: 'Account name is already taken. (FROM BACKEND)'
+                });
+				console.log("Account name is already taken. (BACKEND)");
             } 
             else {
 				try{
@@ -161,7 +90,7 @@ app.post('/register', function(request, response){
 	}
 });
 
-app.post('/auth', function(request, response) {
+app.post('/auth', function(request, response) { //authenticating user logins
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body);
 
@@ -224,7 +153,7 @@ app.post('/auth', function(request, response) {
 	}
 });
 
-app.post('/logout', function(request, response, next) {
+app.post('/logout', function(request, response, next) { //force logout of user
     request.session.loggedin = false;
     let SID = request.sessionID;
     let login = request.session.loggedin;
@@ -239,27 +168,24 @@ app.post('/logout', function(request, response, next) {
     response.end();
 });
 
-app.get('/profile', function(request, response) {
+app.get('/profiledata', function(request, response) {
     let username = request.session.username;
-
     if (request.session.loggedin) {
-         console.log(`Attempting to retrieve stored information for ${username}...`);
-         connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
+        console.log(`Attempting to retrieve stored information for ${username}...`);
+        connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
             if (err) throw err;
-            
+
             var data;
-            data = results[0]
+            data = results[0];
             response.send(data);
             console.log(data);
-         });
-     } else {
-         response.send({
+        });
+    } else {
+        response.send({
             status: "Please login to view this page! (FROM BACKEND)"
-         })
-	 	console.log("Please login to view this page!");
+        })
+		console.log("Please login to view this page!");
 	}
-
-    console.log("Currently infinite looping (fetching data from MySQL database), so I have commented out.");
 })
 
 app.post('/profile', function(request, response) {
@@ -306,19 +232,72 @@ app.post('/profile', function(request, response) {
 		console.log("Please login to view this page!");
 	}
 	response.end();
-
-    
-    // if (loggedin == true) {
-	// 	// Output username
-	// 	response.send('Welcome back, ' + request.session.username + '!');
-	// } else {
-	// 	// Not logged in
-	// 	response.send('Please login to view this page!');
-	// }
-
 });
 
-app.post("/fuelquotemodule", (request, response) => { 
+app.post("/pricingmodulecost", (request, response) => { //updating total cost when receiving request input
+    let fuel_request = request.body.request;
+    let fuel_price = 1.5;
+	let reqFact;
+    let inState;
+    let histFact;
+	let compprofit = 0.1;
+
+    let login = request.session.loggedin;
+    let savedInfo = false;
+
+    if (request.session.loggedin) {
+		try{
+            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
+                histFact = 0.01;
+                //console.log(histFact);
+            }
+            else {
+                histFact = 0;
+                //console.log(histFact);
+            }
+            if (fuel_request > 1000) {
+                reqFact = 0.02;
+            }
+            else if (fuel_request < 1000) {
+                reqFact = 0.03;
+            }
+        
+            if (request.body.state == 'TX') {
+                inState = 0.02;
+            }
+            else {
+                inState = 0.04;
+            }
+            let margin = fuel_price * (inState - histFact + reqFact + compprofit);
+            let perGal = fuel_price + margin;
+            let fuel_cost = (fuel_request * perGal).toFixed(2);
+            
+            console.log(fuel_cost);            
+			
+            savedInfo = true;
+            response.status(201).send({
+                status: 'Fuel cost updated.', 
+                login,
+                savedInfo,
+                price: fuel_price,
+                cost: fuel_cost
+            });
+			console.log("Fuel cost updated.");
+		}
+		catch(err){
+			console.log(err);
+			console.log("Fuel cost could not be updated.");
+		}
+	} else {
+        response.send({
+            status: "Please login to view this page! (FROM BACKEND)"
+        })
+		console.log("Please login to view this page!");
+	}
+	response.end();
+})
+
+app.post("/fuelquotemodule", (request, response) => { //generating the actual fuel quote to be added to the database
     console.log('Retrieving data from frontend');
     let fuel_request = request.body.request;
     let fuel_date = request.body.date;

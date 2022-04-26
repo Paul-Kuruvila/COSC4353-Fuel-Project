@@ -11,69 +11,48 @@ const Profile = () => {
     var [state, setState] = useState();
     const [zipcode, setZipcode] = useState();
 
-    const [backendData, setBackendData] = useState([{}]);
-    var editState = {
-        name: false,
-        address: false,
-        address2: false,
-        city: false,
-        state: false,
-        zipcode: false
-    };
-
     function editFields() {
         let fields = ['name','address','address2','city','state','zipcode'];
         for(let i=0; i < fields.length; i++){
             document.getElementById(fields[i]).removeAttribute('readonly');
         }
-        //document.getElementById('state').removeAttribute('disabled');
+        let buttons = ['save', 'logout', 'fuelquote'];
+        for(let i=0; i < buttons.length; i++){
+            document.getElementById(buttons[i]).style.margin = '15px';
+        }
+        document.getElementById('edit').style.display = 'none';
+        
     }
 
-    async function backend() {
-        const response = await fetch('/profile');
+    const profileData = async () => { //retrieving profile data from backend which is retrieved from database
+        const response = await fetch('/profiledata');
         const jsonData = await response.json();
-        
-        return(jsonData);
-        
 
-        /*setBackendData(jsonData);
-        setName(jsonData[0].fullname);
-        setAddress(jsonData[0].address);
-        if(jsonData[0].address2 != "undefined")
-            setAddress2 (jsonData[0].address2);
-        setCity(jsonData[0].city);
-        setState(jsonData[0].state);
-        setZipcode(jsonData[0].zipcode);*/
-        //console.log(jsonData);
-        // //console.log(jsonData.address);
-        // if(jsonData[0].fullname == undefined)
-        //     editState = "true";
-        // const clientData = {name, address, address2, city, state, zipcode};
-        //console.log(jsonData);
-        //console.log(clientData); // data from db->backend->frontend(here)
+        return jsonData;
     }
 
-    document.addEventListener("DOMContentLoaded", async () => {
+    document.addEventListener("DOMContentLoaded", async () => { //set variables for visual rendering on page load
         let data = [];
-
         try {
-            data = await backend();
-            setName(data.fullname);
-            setAddress(data.address);
-            if(data.address2 != "undefined")
-                setAddress2(data.address2);
-            setCity(data.city);
-            setState(data.state);
-            setZipcode(data.zipcode);
+            data = await profileData();
+            if(data.fullname !== "undefined"){
+                setName(data.fullname);
+                setAddress(data.address);
+                if(data.address2 !== "undefined")
+                    setAddress2(data.address2);
+                setCity(data.city);
+                setState(data.state);
+                setZipcode(data.zipcode);
+            }
         } catch (e) {
             console.log("Error fetching profile data from backend");
+            editFields();
             console.log(e);
         }
         console.log(data);
     })
-    
 
-    const handleSubmit = async(e) => { //sending data
+    const handleSubmit = async(e) => { //sending data to backend
         e.preventDefault();
         state = document.getElementById('state').value;
         const profileData = {name, address, address2, city, state, zipcode};
@@ -90,35 +69,15 @@ const Profile = () => {
         
         if (jsonData.login && jsonData.savedInfo) { //if login status is true/successful and information is true/saved
             console.log(jsonData);
-            history.push('/fuelquoteform') //redirect to fuelquoteform
+            //history.push('/fuelquoteform') //redirect to fuelquoteform
+            document.location.reload('true');
           }
           else {
             console.log(jsonData);
         }
     }
 
-    const handleLogout = async(e) => { //sending data
-        e.preventDefault();
-        const options = {
-            method: 'POST',
-            headers: {"Content-Type": "application/json"},
-            credentials: "include"
-            //body: JSON.stringify(profileData)
-        };
-
-        const response = await fetch('/logout', options);
-        const jsonData = await response.json();
-
-        if (jsonData.login == false) { //if login status is false
-            console.log(jsonData);
-            history.push('/login') //redirect back to login page
-        }
-        else {
-            console.log(jsonData);
-        }
-  }
-
-  return (
+    return (
       <div className="profile">
           <h1>Profile</h1>
           <form onSubmit = {handleSubmit}>
@@ -130,7 +89,6 @@ const Profile = () => {
                     onChange = {(e) => setName(e.target.value)}
                     readOnly="readonly"
                     />
-                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>Address 1</label>
@@ -139,7 +97,6 @@ const Profile = () => {
                     onChange = {(e) => setAddress(e.target.value)}
                     readOnly="readonly"
                     />
-                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>Address 2</label>
@@ -148,7 +105,6 @@ const Profile = () => {
                     onChange = {(e) => setAddress2(e.target.value)}
                     readOnly="readonly"
                     />
-                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>City</label>
@@ -157,11 +113,10 @@ const Profile = () => {
                     onChange = {(e) => setCity(e.target.value)}
                     readOnly="readonly"
                     />
-                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>State</label>
-                    <select className="inputbox" id="state" name="state" defaultValue={""} value={state} readOnly={true}>
+                    <select className="inputbox" id="state" name="state" defaultValue={""} value={state} readOnly="readonly">
                         <option value="">Select a state</option>
                         <option value="AL">AL</option>
                         <option value="AK">AK</option>
@@ -215,42 +170,33 @@ const Profile = () => {
                         <option value="WV">WV</option>
                         <option value="WY">WY</option>
                     </select>
-                    <div className='editbutton'>(edit)</div>
                 </li>
                 <li>
                     <label>Zipcode</label>
-                    <input className="inputbox" id="zipcode" type="text" required placeholder="Enter your zipcode."
+                    <input className="inputbox" id="zipcode" type="number" required placeholder="Enter your zipcode."
                     value = {zipcode}
                     onChange = {(e) => setZipcode(e.target.value)}
                     readOnly="readonly"
                     />
-                    <div onClick={() => editFields()} className='editbutton'>(edit)</div>
                 </li>
                 <li>
-                    <div className = "submitbutton">
-                        <a href="\fuelquoteform">
+                    <div onClick={() => editFields()} id="edit" className="editbutton">Edit Information</div>
+                </li>
+                <li>
+                    <div id="save" className = "submitbutton">
                         <button className="Submit" type="submit">Save</button>
-                        </a>
                     </div>
                 </li>
             </ul>
-        </form>
-        <form onSubmit = {handleLogout}>
-            <div className = "logoutButton">
-                <a href="\login">
-                <button className="Submit" type="submit">Logout</button>
+            <div id="fuelquote" className = "submitbutton">
+                <a href="\fuelquoteform">
+                    <button className="Submit" type="button">Fuel Quote</button>
                 </a>
-            </div>
-        </form>
-        <div className = "submitbutton">
-            <a href="\fuelquoteform">
-            <button className="Submit" type="button">Fuel Quote</button>
-            </a>
         </div>
+        </form>
+        
       </div>
-  );
+    );
 }
-
-//SUBMIT BUTTON type = "submit" previously for validation, temporarily set to "button" to link to the other pages
 
 export default Profile;

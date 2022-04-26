@@ -20,13 +20,12 @@ const FuelQuote = () => {
   //const [totalcost, setFuelCost] = useState();
   //const [backendData, setBackendData] = useState([{}]);
   
-  const profileData = async () => { //retrieving saved profile data from backend
-    const response = await fetch('/fuelquote')
+  const profileData = async () => { //retrieving profile data from backend which is retrieved from database
+    const response = await fetch('/profiledata')
     const jsonData = await response.json();
-
     return(jsonData)
   }
-  document.addEventListener("DOMContentLoaded", async () => {
+  document.addEventListener("DOMContentLoaded", async () => { //set variables for visual rendering on page load
     let data = [];
     try {
         data = await profileData();
@@ -44,10 +43,10 @@ const FuelQuote = () => {
     console.log(data);
   })
 
-  useEffect(() => {
+  useEffect(() => { //used to constantly update the final cost value using the backend calculations and request input
     const finalCostUpdate = async () => {
       cost = (request * price).toFixed(2); //default value
-      const fuelData = {request, date, cost};
+      const fuelData = {request, cost};
       //console.log(fuelData);
   
       const options = {
@@ -60,6 +59,7 @@ const FuelQuote = () => {
       const jsonData = await response.json();
 
       try {
+        setPrice(jsonData.price);
         setCost(jsonData.cost);
       } catch (e) {
           console.log("Error fetching cost from backend");
@@ -71,10 +71,10 @@ const FuelQuote = () => {
     finalCostUpdate().catch(console.error)
   });
 
-  const handleSubmit = async(e) => { //sending data
+  const handleSubmit = async(e) => { //sending data to backend (request, date, price, and cost) and then retrieving the response
     e.preventDefault();
     cost = (request * price).toFixed(2); //default value
-    const fuelData = {request, date, price, cost, address};
+    const fuelData = {request, date, price, cost};
     
     const options = {
       method: 'POST',
@@ -84,6 +84,7 @@ const FuelQuote = () => {
     };
     const response = await fetch('/fuelquotemodule', options);
     const jsonData = await response.json();
+    //document.location.reload('true');
 
     console.log(jsonData);
     return(jsonData);
