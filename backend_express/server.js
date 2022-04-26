@@ -39,6 +39,16 @@ app.get('/', function(request, response) {//ignore for now
 	response.sendFile(path.join(__dirname + '/login'));
 });
 
+app.get("/loginstatus", (request, response) => {
+    let username = request.session.username;
+    let login = false;
+    if (username != null) {
+        login = true;
+    }
+
+    response.send([username,login]);
+})
+
 app.get("/fuelquote", (request, response) => {
     connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation`, (err, results) => {
         if (err) throw err;
@@ -53,6 +63,7 @@ app.get("/fuelquote", (request, response) => {
         zipcode: "77204"
     })*/
 })
+
 app.get("/pricingmodule", (request, response) => {
     let username = request.session.username;
     connection.query(`SELECT totalcost FROM PricingMod WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = PricingMod.userid`, (err, results) => { //WHERE userid = 
@@ -190,23 +201,24 @@ app.post('/logout', function(request, response, next) {
 });
 
 app.get('/profile', function(request, response) {
-    // let username = request.session.username;
+    let username = request.session.username;
 
-    // if (request.session.loggedin) {
-    //     console.log(`Attempting to retrieve stored information for ${username}...`);
-    //     connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
-    //         if (err) throw err;
-    //         response.send(results);
-    //         console.log(results);
-    //     });
-    // } else {
-    //     response.send({
-    //         status: "Please login to view this page! (FROM BACKEND)"
-    //     })
-	// 	console.log("Please login to view this page!");
-	// }
+    if (request.session.loggedin) {
+        console.log(`Attempting to retrieve stored information for ${username}...`);
+        connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
+            if (err) throw err;
 
-    console.log("Currently infinite looping (fetching data from MySQL database), so I have commented out.");
+            var data;
+            data = results[0];
+            response.send(data);
+            console.log(data);
+        });
+    } else {
+        response.send({
+            status: "Please login to view this page! (FROM BACKEND)"
+        })
+		console.log("Please login to view this page!");
+	}
 })
 
 app.post('/profile', function(request, response) {
