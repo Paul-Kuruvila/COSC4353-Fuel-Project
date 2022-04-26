@@ -2,13 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
 const FuelQuoteHistory = () => {
-    /*const history = useHistory();
-
     const [request, setRequest] = useState();
     const [date, setDate] = useState();
     const [price, setPrice] = useState('1.50');
     var [cost, setCost] = useState();
-
+  
     var [fullname, setName] = useState();
     var [address, setAddress] = useState();
     var [address2, setAddress2] = useState();
@@ -16,25 +14,35 @@ const FuelQuoteHistory = () => {
     var [State, setState] = useState();
     var [Zipcode, setZipcode] = useState();
 
-    const [backendData, setBackendData] = useState([{}]);
+    //var [] // array of arrays of all data (profile data and fuel quotes)
 
-    async function backend() {
-    const response = await fetch('/fuelquote')
-    const jsonData = await response.json();
-    //console.log(jsonData.address);
-    setName(jsonData[0].fullname);
-    setAddress(jsonData[0].address);
-    setAddress2 (jsonData[0].address2);
-    setCity(jsonData[0].city);
-    setState(jsonData[0].state);
-    setZipcode(jsonData[0].zipcode);
+    const fuelQuoteData = async () => { //retrieving profile data from backend which is retrieved from database
+        const response = await fetch('/fuelquotehist')
+        const jsonData = await response.json();
+        return(jsonData)
+    }
+    document.addEventListener("DOMContentLoaded", async () => { //set variables for visual rendering on page load
+        let data;
+        try {
+            data = await fuelQuoteData();
+            // setName(data[0].fullname);
+            // setAddress(data.address);
+            // if(data.address2 != "undefined")
+            //     setAddress2(data.address2);
+            // setCity(data.city);
+            // setState(data.state);
+            // setZipcode(data.zipcode);
 
-    const clientData = {address, address2, City, State, Zipcode};
-    //console.log(jsonData);
-    console.log(clientData); // data from db->backend->frontend(here)
-  }
-
-  backend();*/
+            // setRequest(data.request);
+            // setDate(data.date);
+            // setPrice(data.price);
+            // setCost(data.cost);
+        } catch (e) {
+            console.log("Error fetching profile data from backend");
+            console.log(e);
+        }
+        console.log(data);
+    })
 
     return (
         <div className="fuelquotehistory">

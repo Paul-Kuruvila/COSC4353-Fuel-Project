@@ -393,22 +393,19 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
     });*/
 })
 
-/*app.get("/fuelquotehist", (request, response) => {
+app.get("/fuelquotehist", (request, response) => {
     connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation`, (err, results) => {
         if (err) throw err;
         response.send(results);
         console.log(results);
     });
-    response.send({
+    /*response.send({
         address: "Calhoun Road",
         address2: "",
         city: "Houston",
         state: "Texas",
         zipcode: "77204"
-    })
-})*/
-/*app.post("/pricingmodule", (req, res) => { //retrieve
-    
-})*/
+    })*/
+})
 
 app.listen(port, () => {console.log(`Server started on port ${port}`)});
