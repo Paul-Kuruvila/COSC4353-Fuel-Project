@@ -15,7 +15,7 @@ const Navbar = () => {
         };
         const response = await fetch('/loginstatus', options);
         const jsonData = await response.json();
-        console.log(jsonData)
+        //console.log(jsonData)
 
         return jsonData;
     }
@@ -25,12 +25,12 @@ const Navbar = () => {
         try {
             data = await backend();
             setStatus(data[1]);
-            console.log(signed_in);
+            // console.log(signed_in);
         } catch (e) {
             console.log("Error fetching profile data from backend");
             console.log(e);
         }
-        console.log(data);
+        //console.log(data);
     })
 
     const handleLogin = async(e) => { //sending data

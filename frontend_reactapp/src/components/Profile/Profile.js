@@ -16,12 +16,56 @@ const Profile = () => {
         for(let i=0; i < fields.length; i++){
             document.getElementById(fields[i]).removeAttribute('readonly');
         }
+        document.getElementById('state').removeAttribute('disabled');
         let buttons = ['save', 'logout', 'fuelquote'];
         for(let i=0; i < buttons.length; i++){
             document.getElementById(buttons[i]).style.margin = '15px';
         }
         document.getElementById('edit').style.display = 'none';
-        
+    }
+
+    function checkFields(e) {
+        console.log(document.getElementById('name').value[0])
+        if(document.getElementById('name').value[0]===" "){
+            alert("One or more required fields empty!");
+            e.preventDefault();
+        } else if(document.getElementById('city').value[0]===" "){
+            alert("One or more required fields empty!");
+            e.preventDefault();
+        } else if(document.getElementById('zipcode')===" "){
+            alert("One or more required fields empty!");
+            e.preventDefault();
+        } else {
+            return;
+        }
+    }
+
+    function checkEmpty(e) { // if field is empty or filled with spaces, then display placeholder text
+        if(e.target.value === ' '){
+            e.target.value = e.target.value.trim();
+        }
+    }
+
+    function requireChars(e) { // prevents numbers from being typed
+        console.log(e.key);
+        console.log(e.target.value[0]);
+        console.log(e.target.value.length);
+        console.log(e.target.value);
+        if((e.target.value[0] === ' ' || e.target.value[0] === undefined) && e.key === ' '){
+            e.preventDefault();
+        }
+
+        if ((e.key.length === 1 && !isNaN(e.key) && !e.ctrlKey && e.key !== ' ') || e.key === '.') {
+            e.preventDefault();
+            console.log('Please enter a character that is not a number/special character!');
+        }
+    }
+
+    function requireNums(e){ // prevents characters from being typed
+        if (e.key.length === 1 && isNaN(e.key) && !e.ctrlKey || e.key === '.' && e.target.value.toString().indexOf('.') > -1) {
+            e.preventDefault();
+            console.log('Please enter a number!');
+        }
     }
 
     const profileData = async () => { //retrieving profile data from backend which is retrieved from database
@@ -84,23 +128,26 @@ const Profile = () => {
             <ul className="signup-boxes">
                 <li>
                     <label className="">Full Name</label>
-                    <input className="inputbox" id="name" type="text" required placeholder="Enter your first and last name."
+                    <input className="inputbox" id="name" type="text" minLength="2" maxLength="50" required placeholder="Enter your first and last name."
                     value = {name}
                     onChange = {(e) => setName(e.target.value)}
+                    onKeyPress = {(e) => requireChars(e)}
+                    onSelect = {(e) => checkEmpty(e)}
                     readOnly="readonly"
                     />
                 </li>
                 <li>
                     <label>Address 1</label>
-                    <input className="inputbox" id="address" type="text" required placeholder="Enter your address."
+                    <input className="inputbox" id="address" type="text" minLength="2" maxLength="100"  required placeholder="Enter your address."
                     value = {address}
                     onChange = {(e) => setAddress(e.target.value)}
+                    onSelect = {(e) => checkEmpty(e)}
                     readOnly="readonly"
                     />
                 </li>
                 <li>
                     <label>Address 2</label>
-                    <input className="inputbox" id="address2" type="text" placeholder="Enter your address, if applicable."
+                    <input className="inputbox" id="address2" type="text" maxLength="100" placeholder="Enter your address, if applicable."
                     value = {address2}
                     onChange = {(e) => setAddress2(e.target.value)}
                     readOnly="readonly"
@@ -108,15 +155,17 @@ const Profile = () => {
                 </li>
                 <li>
                     <label>City</label>
-                    <input className="inputbox" id="city" type="text" required placeholder="Enter the name of your city."
+                    <input className="inputbox" id="city" type="text" minLength="2" maxLength="100" required placeholder="Enter the name of your city."
                     value = {city}
                     onChange = {(e) => setCity(e.target.value)}
+                    onKeyPress = {(e) => requireChars(e)}
+                    onSelect = {(e) => checkEmpty(e)}
                     readOnly="readonly"
                     />
                 </li>
                 <li>
                     <label>State</label>
-                    <select className="inputbox" id="state" name="state" defaultValue={""} value={state} readOnly="readonly">
+                    <select className="inputbox" id="state" name="state" defaultValue={""} value={state} onChange = {(e) => setState(e.target.value)} disabled={true}>
                         <option value="">Select a state</option>
                         <option value="AL">AL</option>
                         <option value="AK">AK</option>
@@ -173,9 +222,11 @@ const Profile = () => {
                 </li>
                 <li>
                     <label>Zipcode</label>
-                    <input className="inputbox" id="zipcode" type="number" required placeholder="Enter your zipcode."
+                    <input className="inputbox" id="zipcode" type="text" minLength="5" maxLength="9" required placeholder="Enter your zipcode."
                     value = {zipcode}
                     onChange = {(e) => setZipcode(e.target.value)}
+                    onKeyPress = {(e) => requireNums(e)}
+                    onSelect = {(e) => checkEmpty(e)}
                     readOnly="readonly"
                     />
                 </li>
@@ -184,7 +235,7 @@ const Profile = () => {
                 </li>
                 <li>
                     <div id="save" className = "submitbutton">
-                        <button className="Submit" type="submit">Save</button>
+                        <button className="Submit" type="submit" onClick={() => checkFields()}>Save</button>
                     </div>
                 </li>
             </ul>
@@ -192,7 +243,7 @@ const Profile = () => {
                 <a href="\fuelquoteform">
                     <button className="Submit" type="button">Fuel Quote</button>
                 </a>
-        </div>
+            </div>
         </form>
         
       </div>
