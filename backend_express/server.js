@@ -14,8 +14,8 @@ let userData = JSON.parse(filedata);
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'admin',
-	database : 'nodelogin'
+	password : 'password',
+	database : 'fuelio'
 });
 
 const app = express();
@@ -297,6 +297,107 @@ app.post("/pricingmodulecost", (request, response) => { //updating total cost wh
 	response.end();
 })
 
+/*const costtest = {
+    test1 : function(w,x,y,z) {
+        let fuel_price = 1.5;
+        let compprofit = 0.1;
+        if (w > 1000) {
+            reqFact = 0.02;
+        }
+        else {
+            reqFact = 0.03;
+        }
+        return w * (fuel_price + (fuel_price * (x - y + reqFact + compprofit)))
+    },
+    test2 : function(w,x,y,z) {
+        let fuel_price = 1.5;
+        let compprofit = 0.1;
+        if (w > 1000) {
+            reqFact = 0.02;
+        }
+        else {
+            reqFact = 0.03;
+        }
+        return w * (fuel_price + (fuel_price * (x - y + reqFact + compprofit)))
+    },
+    test3 : function(w,x,y,z) {
+        let fuel_price = 1.5;
+        let compprofit = 0.1;
+        if (w > 1000) {
+            reqFact = 0.02;
+        }
+        else {
+            reqFact = 0.03;
+        }
+        return w * (fuel_price + (fuel_price * (x - y + reqFact + compprofit)))
+    },
+    test4 : function(w,x,y,z) {
+        let fuel_price = 1.5;
+        let compprofit = 0.1;
+        if (w > 1000) {
+            reqFact = 0.02;
+        }
+        else {
+            reqFact = 0.03;
+        }
+        return w * (fuel_price + (fuel_price * (x - y + reqFact + compprofit)))
+    },
+    test5 : function(w,x,y,z) {
+        let fuel_price = 1.5;
+        let compprofit = 0.1;
+        if (w > 1000) {
+            reqFact = 0.02;
+        }
+        else {
+            reqFact = 0.03;
+        }
+        return w * (fuel_price + (fuel_price * (x - y + reqFact + compprofit)))
+    },
+    test6 : function(w,x,y,z) {
+        let fuel_price = 1.5;
+        let compprofit = 0.1;
+        if (w > 1000) {
+            reqFact = 0.02;
+        }
+        else {
+            reqFact = 0.03;
+        }
+        return w * (fuel_price + (fuel_price * (x - y + reqFact + compprofit)))
+    }
+}*/
+function costtest(galreq, state, hasHist, loc) {
+    let fuel_request = galreq;
+    let fuel_price = 1.5;
+	let reqFact;
+    let inState = state;
+    let histFact = hasHist
+	let compprofit = 0.1;
+    let location = loc;
+    if (histFact == true) {
+        histFact = 0.01;
+        console.log(histFact);
+    }
+    else {
+        histFact = 0;
+        console.log(histFact);
+    }
+    if (fuel_request > 1000) {
+        reqFact = 0.02;
+    }
+    else {
+        reqFact = 0.03;
+    }
+    if (location == 'TX') {
+        inState = 0.02;
+    }
+    else {
+        inState = 0.04;
+    }
+    let fuel_cost = fuel_request * (fuel_price + (fuel_price * (inState - histFact + reqFact + compprofit)));
+    return fuel_cost;
+}
+module.exports = costtest;
+ 
 app.post("/fuelquotemodule", (request, response) => { //generating the actual fuel quote to be added to the database
     console.log('Retrieving data from frontend');
     let fuel_request = request.body.request;
@@ -394,10 +495,12 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 })
 
 app.get("/fuelquotehist", (request, response) => {
-    connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation`, (err, results) => {
+    let username = request.session.username;
+    connection.query(`SELECT request, date, address, city, state, zipcode, price, cost FROM ClientInformation, FuelQuote WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
         if (err) throw err;
         response.send(results);
         console.log(results);
+        console.log("hello");
     });
     /*response.send({
         address: "Calhoun Road",
