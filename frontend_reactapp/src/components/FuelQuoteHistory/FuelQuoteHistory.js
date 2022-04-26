@@ -23,7 +23,6 @@ const FuelQuoteHistory = () => {
     }
     document.addEventListener("DOMContentLoaded", async () => { //set variables for visual rendering on page load
         let results;
-        let delivery;
         try {
             results = await fuelQuoteData();
             setData(results);

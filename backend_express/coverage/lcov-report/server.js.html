@@ -572,11 +572,7 @@
 <a name='L507'></a><a href='#L507'>507</a>
 <a name='L508'></a><a href='#L508'>508</a>
 <a name='L509'></a><a href='#L509'>509</a>
-<a name='L510'></a><a href='#L510'>510</a>
-<a name='L511'></a><a href='#L511'>511</a>
-<a name='L512'></a><a href='#L512'>512</a>
-<a name='L513'></a><a href='#L513'>513</a>
-<a name='L514'></a><a href='#L514'>514</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L510'></a><a href='#L510'>510</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -1046,7 +1042,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1067,9 +1062,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -1105,8 +1097,8 @@ let userData = JSON.parse(filedata);
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'password',
-	database : 'fuelio'
+	password : 'admin',
+	database : 'nodelogin'
 });
 &nbsp;
 const app = express();
@@ -1526,7 +1518,7 @@ app.post("/fuelquotemodule", <span class="fstat-no" title="function not covered"
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    if (request.session.loggedin) {</span>
 <span class="cstat-no" title="statement not covered" >		try{</span>
-<span class="cstat-no" title="statement not covered" >            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {</span>
+<span class="cstat-no" title="statement not covered" >            if (connection.promise().query(`SELECT EXISTS (SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {</span>
 <span class="cstat-no" title="statement not covered" >                histFact = 0.01;</span>
 <span class="cstat-no" title="statement not covered" >                console.log(histFact);</span>
             }
@@ -1559,7 +1551,6 @@ app.post("/fuelquotemodule", <span class="fstat-no" title="function not covered"
                 '${fuel_request}', '${fuel_date}', '${fuel_price}', '${fuel_cost}')` //remove unique key for duplicates?
             );
                 
-			
 <span class="cstat-no" title="statement not covered" >            savedInfo = true;</span>
 <span class="cstat-no" title="statement not covered" >            response.status(201).send({</span>
                 status: 'Fuel quote created.', 
@@ -1580,14 +1571,11 @@ app.post("/fuelquotemodule", <span class="fstat-no" title="function not covered"
 <span class="cstat-no" title="statement not covered" >		console.log("Please login to view this page!");</span>
 	}
 <span class="cstat-no" title="statement not covered" >	response.end();</span>
-    /*connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM nodelogin.ClientInformation`, function (err, results) {
-        return console.log(results)
-    });*/
 })
 &nbsp;
 app.get("/fuelquotehist", <span class="fstat-no" title="function not covered" >(r</span>equest, response) =&gt; {
     let username = <span class="cstat-no" title="statement not covered" >request.session.username;</span>
-<span class="cstat-no" title="statement not covered" >    connection.query(`SELECT request, date, address, city, state, zipcode, price, cost FROM ClientInformation, FuelQuote WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, <span class="fstat-no" title="function not covered" >(e</span>rr, results) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    connection.query(`SELECT fullname, address, address2, city, state, zipcode, request, date, price, cost FROM ClientInformation, FuelQuote WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, <span class="fstat-no" title="function not covered" >(e</span>rr, results) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        if (err) <span class="cstat-no" title="statement not covered" >throw err;</span></span>
 <span class="cstat-no" title="statement not covered" >        response.send(results);</span>
 <span class="cstat-no" title="statement not covered" >        console.log(results);</span>
@@ -1609,7 +1597,7 @@ app.listen(port, <span class="fstat-no" title="function not covered" >()</span> 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Tue Apr 26 2022 01:18:27 GMT-0500 (Central Daylight Time)
+                at Tue Apr 26 2022 02:02:09 GMT-0500 (Central Daylight Time)
             </div>
         <script src="prettify.js"></script>
         <script>
