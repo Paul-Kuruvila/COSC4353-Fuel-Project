@@ -1,5 +1,5 @@
 import './FuelQuote.css';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {useHistory} from "react-router-dom";
 
 
@@ -17,45 +17,63 @@ const FuelQuote = () => {
   var [City, setCity] = useState();
   var [State, setState] = useState();
   var [Zipcode, setZipcode] = useState();
-  const [totalcost, setFuelCost] = useState();
-
-  const [backendData, setBackendData] = useState([{}]);
-
-  async function backend() {
+  //const [totalcost, setFuelCost] = useState();
+  //const [backendData, setBackendData] = useState([{}]);
+  
+  const profileData = async () => { //retrieving saved profile data from backend
     const response = await fetch('/fuelquote')
     const jsonData = await response.json();
-    //console.log(jsonData.address);
-    setName(jsonData[0].fullname);
-    setAddress(jsonData[0].address);
-    setAddress2 (jsonData[0].address2);
-    setCity(jsonData[0].city);
-    setState(jsonData[0].state);
-    setZipcode(jsonData[0].zipcode);
 
-    const clientData = {address, address2, City, State, Zipcode};
-    //console.log(jsonData);
-    console.log(clientData); // data from db->backend->frontend(here)
+    return(jsonData)
   }
+  document.addEventListener("DOMContentLoaded", async () => {
+    let data = [];
+    try {
+        data = await profileData();
+        setName(data.fullname);
+        setAddress(data.address);
+        if(data.address2 != "undefined")
+            setAddress2(data.address2);
+        setCity(data.city);
+        setState(data.state);
+        setZipcode(data.zipcode);
+    } catch (e) {
+        console.log("Error fetching profile data from backend");
+        console.log(e);
+    }
+    console.log(data);
+  })
 
-  backend();
-
-  async function backend2() {
-    const response = await fetch('/pricingmodule')
-    const jsonData = await response.json();
-    console.log(jsonData);
-    //console.log("hello");
-    setFuelCost(jsonData[jsonData.length-1].totalcost);
-
-    const priceData = {totalcost};
-    console.log(priceData);
-  }
-
-  backend2();
-
+  useEffect(() => {
+    const finalCostUpdate = async () => {
+      cost = (request * price).toFixed(2); //default value
+      const fuelData = {request, date, cost};
+      //console.log(fuelData);
   
+      const options = {
+        method: 'POST',
+        headers: {"Content-Type": "application/json"},
+        //credentials: "include",
+        body: JSON.stringify(fuelData)
+      };
+      const response = await fetch('/pricingmodulecost', options)
+      const jsonData = await response.json();
+
+      try {
+        setCost(jsonData.cost);
+      } catch (e) {
+          console.log("Error fetching cost from backend");
+          console.log(e);
+      }
+      console.log(jsonData.cost)
+      return(jsonData);
+    }
+    finalCostUpdate().catch(console.error)
+  });
+
   const handleSubmit = async(e) => { //sending data
     e.preventDefault();
-    cost = (request * price).toFixed(2);
+    cost = (request * price).toFixed(2); //default value
     const fuelData = {request, date, price, cost, address};
     
     const options = {
@@ -64,19 +82,13 @@ const FuelQuote = () => {
       //credentials: "include",
       body: JSON.stringify(fuelData)
     };
-
-    /*fetch('http://localhost:5000/pricingmodule', options).then(response => {
-      const jsonData = response.json();
-      console.log(response);
-    });*/
-    
     const response = await fetch('/fuelquotemodule', options);
     const jsonData = await response.json();
+
     console.log(jsonData);
-
-
+    return(jsonData);
   }
-
+  
   return (
     <div className="generate">
       <h1>Fuel Quote Form</h1>
@@ -89,7 +101,7 @@ const FuelQuote = () => {
                 step="0.5"
                 required
                 value={request}
-                onChange = {(e) => setRequest(e.target.value)}
+                onChange = {(e) => {setRequest(e.target.value)}}
               />
               <label className = "datelabel">Delivery Date</label>
               <input className = "date"
@@ -116,8 +128,8 @@ const FuelQuote = () => {
                 type = "number"
                 min="0.01"
                 step="0.01"
-                value={totalcost}
-                //onChange = {(e) => setFuelCost(e.target.value)}
+                value={cost}
+                //onChange = {(e) => setCost(e.target.value)}
               />
         </div>
         <div className = "delAddress">
@@ -165,7 +177,7 @@ const FuelQuote = () => {
               //onChange = {(e) => setZipcode(e.target.value)}
             />
         </div>
-        <button onClick>Generate</button>
+        <button>Generate</button>
       </form>
       <a href = "\fuelquotehistory">
       <button type = "button">Quote History</button>
@@ -174,36 +186,52 @@ const FuelQuote = () => {
   );
 }
 
-//<button onClick>Generate</button> was used previously for validation, temporarily set to "button" to link to the other pages
-/*  useEffect(() => {
-    fetch("/pricingmodule").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data)
-      }
-    )
+/*useEffect(() => {
+  const profileData = async () => { //retrieving saved profile data from backend
+    const response = await fetch('/fuelquote')
+    const jsonData = await response.json();
     
-  }, [])
+    try {
+        setName(jsonData.fullname);
+        setAddress(jsonData.address);
+        if(jsonData.address2 != "undefined")
+            setAddress2(jsonData.address2);
+        setCity(jsonData.city);
+        setState(jsonData.state);
+        setZipcode(jsonData.zipcode);
+    } catch (e) {
+        console.log("Error fetching profile data from backend");
+        console.log(e);
+    }
+    console.log(jsonData);
+    return(jsonData)
+  }
+  profileData().catch(console.error)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    cost = (request * price).toFixed(2);
-    const fuelQuote = {request, date, price, cost, address};
-   
-    fetch('http://localhost:5000/pricingmodule', {
+  const finalCostUpdate = async () => {
+    cost = (request * price).toFixed(2); //default value
+    const fuelData = {request, date, cost};
+    //console.log(fuelData);
+
+    const options = {
       method: 'POST',
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(fuelQuote)
-    }).then(() => {
-      console.log('new quote added')
-    })
-    
-    //<div classname = "getquote"> 
+      //credentials: "include",
+      body: JSON.stringify(fuelData)
+    };
+    const response = await fetch('/pricingmodulecost', options)
+    const jsonData = await response.json();
 
-        <button type = "button"> Get Quote </button>
-      
-      </div>
-  }*/
+    try {
+      setCost(jsonData.cost);
+    } catch (e) {
+        console.log("Error fetching cost from backend");
+        console.log(e);
+    }
+    console.log(jsonData.cost)
+    return(jsonData);
+  }
+  finalCostUpdate().catch(console.error)
+});*/
 
 export default FuelQuote;

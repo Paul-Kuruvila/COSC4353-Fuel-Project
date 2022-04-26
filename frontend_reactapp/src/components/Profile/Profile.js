@@ -33,15 +33,18 @@ const Profile = () => {
         const response = await fetch('/profile');
         const jsonData = await response.json();
         
-        setBackendData(jsonData);
+        return(jsonData);
+        
+
+        /*setBackendData(jsonData);
         setName(jsonData[0].fullname);
         setAddress(jsonData[0].address);
         if(jsonData[0].address2 != "undefined")
             setAddress2 (jsonData[0].address2);
         setCity(jsonData[0].city);
         setState(jsonData[0].state);
-        setZipcode(jsonData[0].zipcode);
-        // console.log(jsonData);
+        setZipcode(jsonData[0].zipcode);*/
+        //console.log(jsonData);
         // //console.log(jsonData.address);
         // if(jsonData[0].fullname == undefined)
         //     editState = "true";
@@ -49,7 +52,26 @@ const Profile = () => {
         //console.log(jsonData);
         //console.log(clientData); // data from db->backend->frontend(here)
     }
-    backend();
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        let data = [];
+
+        try {
+            data = await backend();
+            setName(data.fullname);
+            setAddress(data.address);
+            if(data.address2 != "undefined")
+                setAddress2(data.address2);
+            setCity(data.city);
+            setState(data.state);
+            setZipcode(data.zipcode);
+        } catch (e) {
+            console.log("Error fetching profile data from backend");
+            console.log(e);
+        }
+        console.log(data);
+    })
+    
 
     const handleSubmit = async(e) => { //sending data
         e.preventDefault();
