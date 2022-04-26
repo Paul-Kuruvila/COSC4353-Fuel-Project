@@ -14,8 +14,8 @@ let userData = JSON.parse(filedata);
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'password',
-	database : 'fuelio'
+	password : 'admin',
+	database : 'nodelogin'
 });
 
 const app = express();
