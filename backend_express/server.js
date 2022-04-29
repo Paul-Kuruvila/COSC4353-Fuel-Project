@@ -14,8 +14,8 @@ let userData = JSON.parse(filedata);
 const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
-	password : 'admin',
-	database : 'nodelogin'
+	password : 'password',
+	database : 'fuelio'
 });
 
 const app = express();
@@ -247,7 +247,8 @@ app.post("/pricingmodulecost", (request, response) => { //updating total cost wh
 
     if (request.session.loggedin) {
 		try{
-            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
+            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote, ClientInformation WHERE (SELECT userid from UserCredentials WHERE username = '${request.session.username}') = ClientInformation.userid) = 1`)) {
+                //SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`
                 histFact = 0.01;
                 //console.log(histFact);
             }
@@ -435,13 +436,15 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 
     if (request.session.loggedin) {
 		try{
-            if (connection.promise().query(`SELECT EXISTS (SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
+            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote, ClientInformation WHERE (SELECT userid from UserCredentials WHERE username = '${request.session.username}') = ClientInformation.userid) = 1`)) { //select userid from usercredentials where username = etc
                 histFact = 0.01;
                 console.log(histFact);
+                console.log(request.session.username);
             }
             else {
                 histFact = 0;
                 console.log(histFact);
+                console.log(request.session.username);
             }
             if (fuel_request > 1000) {
                 reqFact = 0.02;
