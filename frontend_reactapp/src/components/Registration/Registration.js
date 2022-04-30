@@ -6,6 +6,7 @@ const Registration = () => {
     const history = useHistory();
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
+    const [validCred, setValidity] = useState(true);
 
     const handleSubmit = async (e) => { //sending data
         e.preventDefault();
@@ -18,6 +19,9 @@ const Registration = () => {
         
         const response = await fetch('/register', options);
         const jsonData = await response.json();
+
+        setValidity(jsonData.registered);
+        console.log(validCred);
         
         if (jsonData.registered) { //if registration is successful
             console.log(jsonData);
@@ -36,6 +40,7 @@ const Registration = () => {
                     <input id="username" className="inputbox" type="text" title="Please enter your desired username." required placeholder="Enter a username."
                     value = {username}
                     onChange = {(e) => setUsername(e.target.value)}
+                    onSelect = {() => setValidity(true)}
                     />
                 </li>
                 <li>
@@ -44,6 +49,9 @@ const Registration = () => {
                     value = {password}
                     onChange = {(e) => setPassword(e.target.value)}
                     />
+                </li>
+                <li>
+                    <label className={validCred ? "hideInvalid" : "showInvalid"}>Account name is already taken.<br/>Please enter a different username.</label>
                 </li>
                 <li>
                     <button className="Submit" type="submit">Submit</button>

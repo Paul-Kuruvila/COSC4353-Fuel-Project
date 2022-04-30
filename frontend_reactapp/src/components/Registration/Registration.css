@@ -16,6 +16,16 @@
     margin-left: 5px;
 }
 
+.register .hideInvalid{
+    display: none;
+}
+
+.register .showInvalid{
+    display: inline;
+    font-size:large;
+    color: rgb(170, 0, 0);
+}
+
 
 .register button {
     padding: 10px 25px;

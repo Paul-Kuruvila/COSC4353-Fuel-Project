@@ -6,6 +6,7 @@ const Login = () => {
     const history = useHistory();
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
+    const [validCred, setValidity] = useState(true);
 
     const handleSubmit = async (e) => { //sending data
         e.preventDefault();
@@ -19,6 +20,8 @@ const Login = () => {
 
         const response = await fetch('/auth', options)
         const jsonData = await response.json();
+
+        setValidity(jsonData.login);
         
         if (jsonData.login) { //if login status is true/successful
             console.log(jsonData);
@@ -37,13 +40,18 @@ const Login = () => {
                         <label className="userLabel">Username:</label>
                         <input id="username" className="inputbox" type="text" title="Please enter your username." required placeholder="Enter your username."
                         onChange = {(e) => setUsername(e.target.value)}
+                        onSelect = {() => setValidity(true)}
                         />
                     </li>
                     <li>
                         <label className="passLabel">Password:</label>
                         <input id="password" className="inputbox" type="password" title="Please enter your password." required placeholder="Enter your password."
                         onChange = {(e) => setPassword(e.target.value)}
+                        onSelect = {() => setValidity(true)}
                         />
+                    </li>
+                    <li>
+                        <label className={validCred ? "hideInvalid" : "showInvalid"}>Invalid username/password. Please try again.</label>
                     </li>
                     <li>
                         <button className="Submit" type="submit">Login</button>

@@ -16,6 +16,16 @@
     margin-left: 5px;
 }
 
+.login .hideInvalid{
+    display: none;
+}
+
+.login .showInvalid{
+    display: inline;
+    font-size:large;
+    color: rgb(170, 0, 0);
+}
+
 .login button {
     padding: 10px 25px;
     font-size: 25px;
