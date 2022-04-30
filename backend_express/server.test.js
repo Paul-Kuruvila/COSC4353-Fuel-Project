@@ -56,6 +56,10 @@ describe("Pricing Module Tests", () => {
     test('Calculates the cost of fuel if gallons are less than 1000 ', () => {
         expect(costtest(200, true, true, 'TX')).toEqual(342);
     })
+    
+    test('Successfully create users profile', () => {
+        expect(testprof(true)).toBe("Information saved.");
+    })
 
     
 })

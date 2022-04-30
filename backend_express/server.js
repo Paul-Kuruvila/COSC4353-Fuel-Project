@@ -214,6 +214,7 @@ app.post('/profile', function(request, response) {
             );
 			
             savedInfo = true;
+            testprof(savedInfo);
             response.status(201).send({
                 status: 'Information saved.', 
                 login,
@@ -247,7 +248,8 @@ app.post("/pricingmodulecost", (request, response) => { //updating total cost wh
 
     if (request.session.loggedin) {
 		try{
-            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
+            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote, ClientInformation WHERE (SELECT userid from UserCredentials WHERE username = '${request.session.username}') = ClientInformation.userid) = 1`)) {
+                //SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`
                 histFact = 0.01;
                 //console.log(histFact);
             }
@@ -365,39 +367,54 @@ app.post("/pricingmodulecost", (request, response) => { //updating total cost wh
         return w * (fuel_price + (fuel_price * (x - y + reqFact + compprofit)))
     }
 }*/
-function costtest(galreq, state, hasHist, loc) {
-    let fuel_request = galreq;
-    let fuel_price = 1.5;
-	let reqFact;
-    let inState = state;
-    let histFact = hasHist
-	let compprofit = 0.1;
-    let location = loc;
-    if (histFact == true) {
-        histFact = 0.01;
-        console.log(histFact);
+
+/*const jesttests = {
+    costtest: function(galreq, state, hasHist, loc) {
+        let fuel_request = galreq;
+        let fuel_price = 1.5;
+        let reqFact;
+        let inState = state;
+        let histFact = hasHist
+        let compprofit = 0.1;
+        let location = loc;
+        if (histFact == true) {
+            histFact = 0.01;
+            console.log(histFact);
+        }
+        else {
+            histFact = 0;
+            console.log(histFact);
+        }
+        if (fuel_request > 1000) {
+            reqFact = 0.02;
+        }
+        else {
+            reqFact = 0.03;
+        }
+        if (location == 'TX') {
+            inState = 0.02;
+        }
+        else {
+            inState = 0.04;
+        }
+        let fuel_cost = fuel_request * (fuel_price + (fuel_price * (inState - histFact + reqFact + compprofit)));
+        return fuel_cost;
     }
-    else {
-        histFact = 0;
-        console.log(histFact);
-    }
-    if (fuel_request > 1000) {
-        reqFact = 0.02;
-    }
-    else {
-        reqFact = 0.03;
-    }
-    if (location == 'TX') {
-        inState = 0.02;
-    }
-    else {
-        inState = 0.04;
-    }
-    let fuel_cost = fuel_request * (fuel_price + (fuel_price * (inState - histFact + reqFact + compprofit)));
-    return fuel_cost;
 }
-module.exports = costtest;
+
+module.exports = jesttests;*/
+
+/*function testprof(t){
+    if (t== true) {
+        return "Information saved.";
+    }
+    else {
+        return "Information not saved.";
+    }
+}
  
+module.exports = testprof;*/
+
 app.post("/fuelquotemodule", (request, response) => { //generating the actual fuel quote to be added to the database
     console.log('Retrieving data from frontend');
     let fuel_request = request.body.request;
@@ -435,13 +452,15 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 
     if (request.session.loggedin) {
 		try{
-            if (connection.promise().query(`SELECT EXISTS (SELECT * FROM FuelQuote WHERE userid = '${request.session.username}')`) == 1) {
+            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote, ClientInformation WHERE (SELECT userid from UserCredentials WHERE username = '${request.session.username}') = ClientInformation.userid) = 1`)) { //select userid from usercredentials where username = etc
                 histFact = 0.01;
                 console.log(histFact);
+                console.log(request.session.username);
             }
             else {
                 histFact = 0;
                 console.log(histFact);
+                console.log(request.session.username);
             }
             if (fuel_request > 1000) {
                 reqFact = 0.02;
