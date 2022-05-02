@@ -1,6 +1,8 @@
 import './Home.css';
 
-const Home = () => {
+//Home component handled by Paul
+
+const Home = () => { 
     return (
         <div className="home">
             <h1>Get Your Rate of Fuel Today!</h1>   

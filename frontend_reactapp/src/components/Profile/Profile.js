@@ -2,6 +2,8 @@ import './Profile.css';
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
+//html/validation/etc. handled by Paul; http requests handled by Eric
+
 const Profile = () => {
     const history = useHistory();
     const [name, setName] = useState();

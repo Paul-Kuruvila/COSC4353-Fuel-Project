@@ -11,11 +11,11 @@ const e = require('cors');
 let filedata = fs.readFileSync('./data/db.json');
 let userData = JSON.parse(filedata);
 
-const connection = mysql.createConnection({
+const connection = mysql.createConnection({ 
 	host     : 'localhost',
 	user     : 'root',
 	password : 'admin',
-	database : 'fuelio'
+	database : 'nodelogin'
 });
 
 const app = express();
@@ -31,6 +31,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'static')));
 
+//the above setup by Eric
+
+
+
 
 
 app.get('/', function(request, response) {//ignore for now
@@ -38,7 +42,7 @@ app.get('/', function(request, response) {//ignore for now
 	response.sendFile(path.join(__dirname + '/login'));
 });
 
-app.get("/loginstatus", (request, response) => {
+app.get("/loginstatus", (request, response) => { //done by Paul
     let username = request.session.username;
     let login = false;
     if (username != null) {
@@ -48,7 +52,7 @@ app.get("/loginstatus", (request, response) => {
     response.send([username,login]);
 })
 
-app.post('/register', function(request, response){ //registering users
+app.post('/register', function(request, response){ //registering users //done by Paul
 	let username = request.body.username;
 	let password = request.body.password;
     let registered = false;
@@ -90,7 +94,7 @@ app.post('/register', function(request, response){ //registering users
 	}
 });
 
-app.post('/auth', function(request, response) { //authenticating user logins
+app.post('/auth', function(request, response) { //authenticating user logins //done by Eric
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body);
 
@@ -153,7 +157,7 @@ app.post('/auth', function(request, response) { //authenticating user logins
 	}
 });
 
-app.post('/logout', function(request, response, next) { //force logout of user
+app.post('/logout', function(request, response, next) { //force logout of user //done by Eric
     request.session.loggedin = false;
     let SID = request.sessionID;
     let login = request.session.loggedin;
@@ -168,7 +172,7 @@ app.post('/logout', function(request, response, next) { //force logout of user
     response.end();
 });
 
-app.get('/profiledata', function(request, response) {
+app.get('/profiledata', function(request, response) {//receiving profile data to output in the front end //done by Paul
     let username = request.session.username;
     if (request.session.loggedin) {
         console.log(`Attempting to retrieve stored information for ${username}...`);
@@ -188,7 +192,7 @@ app.get('/profiledata', function(request, response) {
 	}
 })
 
-app.post('/profile', function(request, response) {
+app.post('/profile', function(request, response) { //saving profile data //done by Eric
     //response.setHeader('Access-Control-Allow-Credentials', 'true')
     //console.log(request.body.state);
     //console.log(request.session.loggedin)
@@ -214,7 +218,7 @@ app.post('/profile', function(request, response) {
             );
 			
             savedInfo = true;
-            testprof(savedInfo);
+            //testprof(savedInfo);
             response.status(201).send({
                 status: 'Information saved.', 
                 login,
@@ -235,7 +239,8 @@ app.post('/profile', function(request, response) {
 	response.end();
 });
 
-app.post("/pricingmodulecost", (request, response) => { //updating total cost when receiving request input
+app.post("/pricingmodulecost", (request, response) => { //updating total cost when receiving request input 
+                                                        //(calculations copied from /fuelquotemodule) //done by Eric
     let fuel_request = request.body.request;
     let fuel_price = 1.5;
 	let reqFact;
@@ -243,15 +248,19 @@ app.post("/pricingmodulecost", (request, response) => { //updating total cost wh
     let histFact;
 	let compprofit = 0.1;
 
+    var data;
+
     let login = request.session.loggedin;
+    let username = request.session.username;
     let savedInfo = false;
 
     if (request.session.loggedin) {
 		try{
-            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote, ClientInformation WHERE (SELECT userid from UserCredentials WHERE username = '${request.session.username}') = ClientInformation.userid) = 1`)) {
-                //SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`
+            if (connection.promise().query(`SELECT EXISTS(SELECT * FROM FuelQuote, ClientInformation WHERE (SELECT userid from UserCredentials WHERE username = '${request.session.username}') = ClientInformation.userid) = 1`)) { //select userid from usercredentials where username = etc
                 histFact = 0.01;
                 //console.log(histFact);
+                console.log(request.session.username);
+                //SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`
             }
             else {
                 histFact = 0;
@@ -264,19 +273,37 @@ app.post("/pricingmodulecost", (request, response) => { //updating total cost wh
                 reqFact = 0.03;
             }
         
-            if (request.body.state == 'TX') {
+            connection.query(`SELECT state FROM ClientInformation WHERE userid = (SELECT userid FROM UserCredentials WHERE username = '${username}') AND state = 'TX'`, (err, results) => { 
+                if (err) throw err;
+                setValue(results[0].state);
+                //console.log(results);
+            })
+
+            function setValue(value) {
+                data = value;
+                //console.log(data);
+            }
+            
+            if (data == 'TX') {
                 inState = 0.02;
             }
             else {
                 inState = 0.04;
             }
+
             let margin = fuel_price * (inState - histFact + reqFact + compprofit);
             let perGal = fuel_price + margin;
-            let fuel_cost = (fuel_request * perGal).toFixed(2);
+            let fuel_cost = (fuel_request * perGal).toFixed(2);       
             
-            console.log(fuel_cost);            
-			
+            console.log(inState);
+            console.log(histFact);
+            console.log(reqFact);
+            console.log(compprofit);
+            console.log(margin);
+            console.log(fuel_cost);  
+
             savedInfo = true;
+            
             response.status(201).send({
                 status: 'Fuel cost updated.', 
                 login,
@@ -415,7 +442,7 @@ module.exports = jesttests;*/
  
 module.exports = testprof;*/
 
-app.post("/fuelquotemodule", (request, response) => { //generating the actual fuel quote to be added to the database
+app.post("/fuelquotemodule", (request, response) => { //generating the actual fuel quote to be added to the database //setup by Eric, calculations by David
     console.log('Retrieving data from frontend');
     let fuel_request = request.body.request;
     let fuel_date = request.body.date;
@@ -481,6 +508,8 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
             //connection.promise().query(`INSERT INTO FuelQuote (userid, cost) VALUES((SELECT userid FROM UserCredentials WHERE username = '${request.session.username}'),'${fuel_cost}')`);
             console.log(fuel_cost);
 
+            
+
             connection.promise().query(
                 `INSERT INTO FuelQuote (userid, request, date, price, cost)  
                 VALUES((SELECT userid FROM UserCredentials WHERE username = '${request.session.username}'), 
@@ -509,9 +538,9 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 	response.end();
 })
 
-app.get("/fuelquotehist", (request, response) => {
+app.get("/fuelquotehist", (request, response) => { //receiving fuel quote data for user //done by David
     let username = request.session.username;
-    connection.query(`SELECT fullname, address, address2, city, state, zipcode, request, date, price, cost FROM ClientInformation, FuelQuote WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
+    connection.query(`SELECT fullname, address, address2, city, state, zipcode, request, date, price, cost FROM (ClientInformation, FuelQuote) WHERE ClientInformation.userid = (SELECT userid FROM UserCredentials WHERE username = '${username}') AND FuelQuote.userid = (SELECT userid FROM UserCredentials WHERE username = '${username}')`, (err, results) => {
         if (err) throw err;
         response.send(results);
         console.log(results);

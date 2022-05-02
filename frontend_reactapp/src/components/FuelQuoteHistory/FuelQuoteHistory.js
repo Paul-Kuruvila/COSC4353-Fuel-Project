@@ -1,20 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
-const FuelQuoteHistory = () => {
-    const [request, setRequest] = useState();
-    const [date, setDate] = useState();
-    const [price, setPrice] = useState('1.50');
-    var [cost, setCost] = useState();
-  
-    var [fullname, setName] = useState();
-    var [address, setAddress] = useState();
-    var [address2, setAddress2] = useState();
-    var [City, setCity] = useState();
-    var [State, setState] = useState();
-    var [Zipcode, setZipcode] = useState();
+//html and table generation by David; http requests handled by Eric
 
+const FuelQuoteHistory = () => {
     var [data, setData] = useState([]); // array of arrays of all data (profile data and fuel quotes)
+
     console.log(data)
     const fuelQuoteData = async () => { //retrieving profile data from backend which is retrieved from database
         const response = await fetch('/fuelquotehist')
@@ -45,7 +36,7 @@ const FuelQuoteHistory = () => {
         //console.log(results);
     })
 
-    return (
+    return ( //html handled by David
         <div className="fuelquotehistory">
             <nav>
                     <ul className="options">

@@ -2,6 +2,8 @@ import './Registration.css';
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
+//html/validation/etc. handled by Paul; http requests handled by Eric
+
 const Registration = () => {
     const history = useHistory();
     const [username, setUsername] = useState();

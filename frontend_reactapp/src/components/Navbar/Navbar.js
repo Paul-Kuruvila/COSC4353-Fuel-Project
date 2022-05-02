@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import './Navbar.css';
 import {useHistory} from "react-router-dom";
 
+//Navbar component handled by Paul
+
 const Navbar = () => {
     const history = useHistory();
     const [signed_in, setStatus] = useState();

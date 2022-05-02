@@ -8,6 +8,8 @@ import FuelQuote from './components/FuelQuote/FuelQuote';
 import FuelQuoteHistory from './components/FuelQuoteHistory/FuelQuoteHistory';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
+//App handled by Eric
+
 function App() {
   
   return (
