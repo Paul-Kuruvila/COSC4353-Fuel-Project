@@ -1,8 +1,14 @@
 const server = require('./server.js');
 const supertest = require('supertest');
 const requestWithSupertest = supertest(server);
+
 // const { createPool } = require("mysql2/promise");
 // const faker = require("@faker-js/faker");
+
+//testing setup by David and Eric
+
+
+
 
 /*const testreg = require('./server.js')
 
