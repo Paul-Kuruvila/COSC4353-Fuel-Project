@@ -39,7 +39,7 @@ const FuelQuote = () => {
         setZipcode(data.zipcode);
     } catch (e) {
         console.log("Error fetching profile data from backend");
-        console.log(e);
+        //console.log(e);
     }
     console.log(data);
   })

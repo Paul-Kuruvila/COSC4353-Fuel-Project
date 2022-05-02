@@ -254,57 +254,65 @@ app.post("/pricingmodulecost", (request, response) => { //updating total cost wh
 
     if (request.session.loggedin) {
 		try{
-            connection.query(`SELECT state FROM ClientInformation WHERE userid = (SELECT userid FROM UserCredentials WHERE username = '${username}'); SELECT EXISTS (SELECT * FROM FuelQuote WHERE userid = (SELECT userid from UserCredentials WHERE username = '${username}')) = 1 as userExists`, (err, results) => { 
+            connection.query(`SELECT state FROM ClientInformation WHERE userid = (SELECT userid FROM UserCredentials WHERE username = '${username}'); SELECT EXISTS (SELECT * FROM FuelQuote WHERE userid = (SELECT userid from UserCredentials WHERE username = '${username}')) = 1 as prevQuoteExists; SELECT EXISTS (SELECT * FROM ClientInformation WHERE userid = (SELECT userid from UserCredentials WHERE username = '${username}')) = 1 as profileExists`, (err, results) => { 
                 if (err) throw err;
-                //console.log(results[1][0].userExists == 1);
+                //console.log(results[1][0].prevQuoteExists == 1);
 
-                if (results[1][0].userExists == true) {
-                    histFact = 0.01;
-                }
-                else {
-                    histFact = 0;
-                }
-                
-                //console.log(histFact);
-                //console.log(request.session.username);
-                //SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`
-                 //select userid from usercredentials where username = etc
-
-                if (results[0][0].state == 'TX') {
-                    inState = 0.02;
-                }
-                else {
-                    inState = 0.04;
-                }
-
-                if (fuel_request > 1000) {
-                    reqFact = 0.02;
-                }
-                else if (fuel_request < 1000) {
-                    reqFact = 0.03;
-                }
-                
-                let margin = fuel_price * (inState - histFact + reqFact + compprofit);
-                let perGal = fuel_price + margin;
-                let fuel_cost = (fuel_request * perGal).toFixed(2);       
-                
-                // console.log(inState);
-                // console.log(histFact);
-                // console.log(reqFact);
-                // console.log(compprofit);
-                // console.log(margin);
-                // console.log(fuel_cost);  
+                if (results[2][0].profileExists == false) {
+                    response.send({
+                        status: "No profile data saved."
+                    })
+                    console.log("No profile data saved. (BACKEND)")
+                    response.end();
+                } else {
+                    if (results[1][0].prevQuoteExists == true) {
+                        histFact = 0.01;
+                    }
+                    else {
+                        histFact = 0;
+                    }
+                    
+                    //console.log(histFact);
+                    //console.log(request.session.username);
+                    //SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`
+                     //select userid from usercredentials where username = etc
     
-                savedInfo = true;
-                
-                response.send({
-                    status: 'Fuel cost updated.', 
-                    login,
-                    savedInfo,
-                    price: fuel_price,
-                    cost: fuel_cost
-                });
-                console.log("Fuel cost updated.");
+                    if (results[0][0].state == 'TX') {
+                        inState = 0.02;
+                    }
+                    else {
+                        inState = 0.04;
+                    }
+    
+                    if (fuel_request > 1000) {
+                        reqFact = 0.02;
+                    }
+                    else if (fuel_request < 1000) {
+                        reqFact = 0.03;
+                    }
+                    
+                    let margin = fuel_price * (inState - histFact + reqFact + compprofit);
+                    let perGal = fuel_price + margin;
+                    let fuel_cost = (fuel_request * perGal).toFixed(2);       
+                    
+                    // console.log(inState);
+                    // console.log(histFact);
+                    // console.log(reqFact);
+                    // console.log(compprofit);
+                    // console.log(margin);
+                    // console.log(fuel_cost);  
+        
+                    savedInfo = true;
+                    
+                    response.send({
+                        status: 'Fuel cost updated.', 
+                        login,
+                        savedInfo,
+                        price: fuel_price,
+                        cost: fuel_cost
+                    });
+                    console.log("Fuel cost updated.");
+                }               
             })
 		}
 		catch(err){
@@ -452,62 +460,70 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 
     if (request.session.loggedin) {
 		try{
-            connection.query(`SELECT state FROM ClientInformation WHERE userid = (SELECT userid FROM UserCredentials WHERE username = '${username}'); SELECT EXISTS (SELECT * FROM FuelQuote WHERE userid = (SELECT userid from UserCredentials WHERE username = '${username}')) = 1 as userExists`, (err, results) => { 
+            connection.query(`SELECT state FROM ClientInformation WHERE userid = (SELECT userid FROM UserCredentials WHERE username = '${username}'); SELECT EXISTS (SELECT * FROM FuelQuote WHERE userid = (SELECT userid from UserCredentials WHERE username = '${username}')) = 1 as prevQuoteExists; SELECT EXISTS (SELECT * FROM ClientInformation WHERE userid = (SELECT userid from UserCredentials WHERE username = '${username}')) = 1 as profileExists`, (err, results) => { 
                 if (err) throw err;
-                console.log(results);
-
-                if (results[1][0].userExists == true) {
-                    histFact = 0.01;
+                //console.log(results);
+                if (results[2][0].profileExists == false) {
+                    response.send({
+                        status: "Please save your profile data before attempting to generate a fuel quote."
+                    })
+                    console.log("Please save your profile data before attempting to generate a fuel quote. (BACKEND)")
+                    response.end();
                 }
                 else {
-                    histFact = 0;
-                }
-                
-                //console.log(histFact);
-                //console.log(request.session.username);
-                //SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`
-                //select userid from usercredentials where username = etc
+                    if (results[1][0].prevQuoteExists == true) {
+                        histFact = 0.01;
+                    }
+                    else {
+                        histFact = 0;
+                    }
+                    
+                    //console.log(histFact);
+                    //console.log(request.session.username);
+                    //SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`
+                    //select userid from usercredentials where username = etc
 
-                if (results[0][0].state == 'TX') {
-                    inState = 0.02;
-                }
-                else {
-                    inState = 0.04;
-                }
+                    if (results[0][0].state == 'TX') {
+                        inState = 0.02;
+                    }
+                    else {
+                        inState = 0.04;
+                    }
 
-                if (fuel_request > 1000) {
-                    reqFact = 0.02;
-                }
-                else if (fuel_request < 1000) {
-                    reqFact = 0.03;
-                }
-                
-                let margin = fuel_price * (inState - histFact + reqFact + compprofit);
-                let perGal = fuel_price + margin;
-                let fuel_cost = (fuel_request * perGal).toFixed(2);       
-                
-                // console.log(inState);
-                // console.log(histFact);
-                // console.log(reqFact);
-                // console.log(compprofit);
-                // console.log(margin);
-                // console.log(fuel_cost);  
+                    if (fuel_request > 1000) {
+                        reqFact = 0.02;
+                    }
+                    else if (fuel_request < 1000) {
+                        reqFact = 0.03;
+                    }
+                    
+                    let margin = fuel_price * (inState - histFact + reqFact + compprofit);
+                    let perGal = fuel_price + margin;
+                    let fuel_cost = (fuel_request * perGal).toFixed(2);       
+                    
+                    // console.log(inState);
+                    // console.log(histFact);
+                    // console.log(reqFact);
+                    // console.log(compprofit);
+                    // console.log(margin);
+                    // console.log(fuel_cost);  
 
-                connection.promise().query(
-                    `INSERT INTO FuelQuote (userid, request, date, price, cost)  
-                    VALUES((SELECT userid FROM UserCredentials WHERE username = '${username}'), 
-                    '${fuel_request}', '${fuel_date}', '${fuel_price}', '${fuel_cost}')` //remove unique key for duplicates?
-                );
-    
-                savedInfo = true;
-                
-                response.send({
-                    status: 'Fuel quote generated.', 
-                    login,
-                    savedInfo,
-                    cost: fuel_cost
-                });
-                console.log("Fuel quote generated.");
+                    connection.promise().query(
+                        `INSERT INTO FuelQuote (userid, request, date, price, cost)  
+                        VALUES((SELECT userid FROM UserCredentials WHERE username = '${username}'), 
+                        '${fuel_request}', '${fuel_date}', '${fuel_price}', '${fuel_cost}')` //remove unique key for duplicates?
+                    );
+        
+                    savedInfo = true;
+                    
+                    response.send({
+                        status: 'Fuel quote generated.', 
+                        login,
+                        savedInfo,
+                        cost: fuel_cost
+                    });
+                    console.log("Fuel quote generated.");
+                }
             })
 		}
 		catch(err){
