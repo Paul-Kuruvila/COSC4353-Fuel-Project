@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "start": "node server",
     "dev": "nodemon server"
   },
@@ -25,7 +25,7 @@
     "@faker-js/faker": "^6.2.0",
     "faker": "^6.6.6",
     "jest": "^27.5.1",
-    "nodemon": "^2.0.15",
+    "nodemon": "^2.0.16",
     "supertest": "^6.2.3"
   },
   "description": ""

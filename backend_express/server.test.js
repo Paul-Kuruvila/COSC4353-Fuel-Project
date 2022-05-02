@@ -5,7 +5,7 @@ const requestWithSupertest = supertest(server);
 // const { createPool } = require("mysql2/promise");
 // const faker = require("@faker-js/faker");
 
-//testing setup by David and Eric
+//testing setup by David, Paul, and Eric
 
 
 
@@ -133,11 +133,11 @@ describe("Pricing Module Tests", () => {
         expect(res.status).toEqual(200);
     })
 
-    // it('POST /register', async () => {
-    //     const res = await requestWithSupertest.post('/register');
-    //     jest.useFakeTimers()
-    //     expect(res.status).toEqual(200);
-    // })
+    it('POST /register', async () => {
+        const res = await requestWithSupertest.post('/register')
+        jest.useFakeTimers()
+        expect(res.status).toEqual(200);
+    })
 
     it('POST /auth', async () => {
         const data = {
@@ -156,13 +156,14 @@ describe("Pricing Module Tests", () => {
     it('POST /logout', async () => {
         const res = await requestWithSupertest.post('/logout');
         jest.useFakeTimers()
+        expect(res.status).toEqual(200);
         expect(res.body.status).toEqual("Successfully logged out (FROM BACKEND)");
     })
 
     it('GET /profiledata', async () => {
         const res = await requestWithSupertest.get('/profiledata');
         jest.useFakeTimers()
-        expect(res.status).toEqual(200);
+        expect(res.status).toEqual(401);
     });
 
     it('POST /profile', async () => {
@@ -172,26 +173,26 @@ describe("Pricing Module Tests", () => {
         const res = await requestWithSupertest.post('/profile')
         .send(data);
         jest.useFakeTimers()
-        expect(res.status).toEqual(200);
+        expect(res.status).toEqual(401);
     })
 
     it('POST /pricingmodulecost', async () => {
         const res = await requestWithSupertest.post('/pricingmodulecost');
         jest.useFakeTimers()
-        expect(res.status).toEqual(200);
+        expect(res.status).toEqual(401);
     })
 
     it('POST /fuelquotemodule', async () => {
         const res = await requestWithSupertest.post('/fuelquotemodule');
         jest.useFakeTimers()
-        expect(res.status).toEqual(200);
+        expect(res.status).toEqual(403);
     })
 
-    // it('GET /fuelquotehist', async () => {
-    //     const res = await requestWithSupertest.get('/fuelquotehist');
-    //     jest.useFakeTimers()
-    //     expect(res.status).toEqual(200);
-    // })
+    it('GET /fuelquotehist', async () => {
+        const res = await requestWithSupertest.get('/fuelquotehist');
+        jest.useFakeTimers()
+        expect(res.status).toEqual(400);
+    })
 })
 
 

@@ -16,7 +16,7 @@ const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
 	password : 'admin',
-	database : 'nodelogin',
+	database : 'fuelio',
     multipleStatements: true
 });
 
@@ -93,7 +93,13 @@ app.post('/register', function(request, response){ //registering users //done by
 			}
 			response.end();
 		});	
-	}
+	} else {
+        response.send({
+            status: 'Please enter Username and Password! (FROM BACKEND)'
+        });
+        console.log("Please enter Username and Password! (BACKEND)");
+		response.end();
+    }
 });
 
 app.post('/auth', function(request, response) { //authenticating user logins //done by Eric
@@ -187,7 +193,7 @@ app.get('/profiledata', function(request, response) {//receiving profile data to
             console.log(data);
         });
     } else {
-        response.send({
+        response.status(401).send({
             status: "Please login to view this page! (FROM BACKEND)"
         })
 		console.log("Please login to view this page!");
@@ -233,7 +239,7 @@ app.post('/profile', function(request, response) { //saving profile data //setup
 			console.log("Information was not saved.");
 		}
 	} else {
-        response.send({
+        response.status(401).send({
             status: "Please login to view this page! (FROM BACKEND)"
         })
 		console.log("Please login to view this page!");
@@ -322,7 +328,7 @@ app.post("/pricingmodulecost", (request, response) => { //updating total cost wh
 			console.log("Fuel cost could not be updated.");
 		}
 	} else {
-        response.send({
+        response.status(401).send({
             status: "Please login to view this page! (FROM BACKEND)"
         })
 		console.log("Please login to view this page!");
@@ -417,7 +423,7 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 			console.log("Fuel quote could not be generated.");
 		}
 	} else {
-        response.send({
+        response.status(403).send({
             status: "Please login to view this page! (FROM BACKEND)"
         })
 		console.log("Please login to view this page!");
@@ -428,7 +434,10 @@ app.post("/fuelquotemodule", (request, response) => { //generating the actual fu
 app.get("/fuelquotehist", (request, response) => { //receiving fuel quote data for user //done by David
     let username = request.session.username;
     connection.query(`SELECT fullname, address, address2, city, state, zipcode, request, date, price, cost FROM (ClientInformation, FuelQuote) WHERE ClientInformation.userid = (SELECT userid FROM UserCredentials WHERE username = '${username}') AND FuelQuote.userid = (SELECT userid FROM UserCredentials WHERE username = '${username}')`, (err, results) => {
-        if (err) throw err;
+        if (err){
+            response.status(400).send(err);
+            throw err;
+        } 
         response.status(200).send(results);
         console.log(results);
         //console.log("hello");
@@ -442,5 +451,6 @@ app.get("/fuelquotehist", (request, response) => { //receiving fuel quote data f
     })*/
 })
 
-//module.exports = app;
+// connection.end();
+// module.exports = app;
 app.listen(port, () => {console.log(`Server started on port ${port}`)});
