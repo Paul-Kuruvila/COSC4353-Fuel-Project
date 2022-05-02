@@ -2,7 +2,7 @@ import './Login.css';
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
-//html/validation/etc. handled by Paul; http requests handled by Eric
+//Login component html/validation/etc. handled by Paul; http requests handled by Eric
 
 const Login = () => {
     const history = useHistory();

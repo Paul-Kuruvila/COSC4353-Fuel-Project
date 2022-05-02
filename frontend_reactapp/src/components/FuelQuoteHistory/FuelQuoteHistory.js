@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
-//html and table generation by David; http requests handled by Eric
+//FuelQuoteHistory component html and table generation by David; http requests handled by Eric
 
 const FuelQuoteHistory = () => {
     var [data, setData] = useState([]); // array of arrays of all data (profile data and fuel quotes)
