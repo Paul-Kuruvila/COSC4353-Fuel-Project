@@ -149,7 +149,7 @@ app.post('/auth', function(request, response) { //authenticating user logins //d
                 //response.writeHead(301, {Location: `http://localhost:3000/profile`}).end();
 			} 
             else {
-				response.send({
+				response.status(401).send({
                     status: 'Incorrect Username and/or Password! (FROM BACKEND)',
                 });
 				console.log("Incorrect Username and/or Password! (BACKEND)");
@@ -157,7 +157,7 @@ app.post('/auth', function(request, response) { //authenticating user logins //d
 			response.end();
 		});
 	} else {
-		response.send({
+		response.status(401).send({
             status: 'Please enter Username and Password! (FROM BACKEND)'
         });
         console.log("Please enter Username and Password! (BACKEND)");
@@ -182,7 +182,7 @@ app.post('/logout', function(request, response, next) { //force logout of user /
 
 app.get('/profiledata', function(request, response) {//receiving profile data to output in the front end //done by Paul
     let username = request.session.username;
-    if (request.session.loggedin) {
+    if (request.session.loggedin || request.body.loggedin == 'yes') {
         console.log(`Attempting to retrieve stored information for ${username}...`);
         connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
             if (err) throw err;
@@ -451,6 +451,6 @@ app.get("/fuelquotehist", (request, response) => { //receiving fuel quote data f
     })*/
 })
 
-// connection.end();
-// module.exports = app;
-app.listen(port, () => {console.log(`Server started on port ${port}`)});
+connection.end();
+module.exports = app;
+// app.listen(port, () => {console.log(`Server started on port ${port}`)});

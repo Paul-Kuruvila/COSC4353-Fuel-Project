@@ -43,7 +43,7 @@ test('Successfully create users profile', () => {
 })*/
 
 //const costtest = require('./server.js')
-describe("Pricing Module Tests", () => {
+describe("Unit Tests", () => {
     //jest.setTimeout(100000)
     // test('Calculates the cost of fuel for in state ', () => {
     //     expect(costtest(1500, true, true, 'TX')).toEqual(2542.5);
@@ -133,24 +133,36 @@ describe("Pricing Module Tests", () => {
         expect(res.status).toEqual(200);
     })
 
-    it('POST /register', async () => {
+    it('POST /register Either Username/Password Not Entered', async () => {
         const res = await requestWithSupertest.post('/register')
         jest.useFakeTimers()
         expect(res.status).toEqual(200);
     })
 
-    it('POST /auth', async () => {
-        const data = {
-            username: 'eric',
-            password: 123
-        };
+    it('POST /register Unsuccessful POST', async () => {
+        const res = await requestWithSupertest.post('/register')
+        .send({     // sending in test parameters to receive an unsuccessful response due to internal server error
+            username: 'paul',
+            password: '123123',
+        });
+        jest.useFakeTimers()
+        expect(res.status).toEqual(500);
+    })
+
+    it('POST /auth No Username/Password Inputted', async () => {
         const res = await requestWithSupertest.post('/auth')
-        //.send(data);
         jest.useFakeTimers();
-        expect(res.status).toEqual(200);
-        // expect(
-        //     await db.query(sql`SELECT userid, username, password FROM UserCredentials WHERE username=${data.username}`),
-        //   ).toEqual([{id: expect.any(Number), username: 'eric', password: '123'}]);
+        expect(res.status).toEqual(401);
+    })
+
+    it('POST /auth Unsuccessful POST', async () => {
+        const res = await requestWithSupertest.post('/auth')
+        .send({     // sending in test parameters to receive an unsuccessful response due to internal server error
+            username: 'paul',
+            password: '123123',
+        });
+        jest.useFakeTimers();
+        expect(res.status).toEqual(500);
     })
 
     it('POST /logout', async () => {
@@ -160,8 +172,19 @@ describe("Pricing Module Tests", () => {
         expect(res.body.status).toEqual("Successfully logged out (FROM BACKEND)");
     })
 
-    it('GET /profiledata', async () => {
-        const res = await requestWithSupertest.get('/profiledata');
+    it('GET /profiledata Unsuccessful GET', async () => {
+        const res = await requestWithSupertest.get('/profiledata')
+        .send({
+            username: 'paul',
+            password: '123123',
+            loggedin: 'yes'
+        });
+        jest.useFakeTimers()
+        expect(res.status).toEqual(500);
+    });
+
+    it('GET /profiledata User Not Logged In', async () => {
+        const res = await requestWithSupertest.get('/profiledata')
         jest.useFakeTimers()
         expect(res.status).toEqual(401);
     });
