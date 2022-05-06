@@ -2,9 +2,9 @@ import './Registration.css';
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
-//Registration component html/validation/etc. handled by Paul; http requests handled by Eric
+//Registration component html/validation/etc. handled by Paul; http requests handled by Eric; buttons and display by David
 
-const Registration = () => {
+const Registration = ({label}) => {
     const history = useHistory();
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
@@ -56,7 +56,7 @@ const Registration = () => {
                     <label className={validCred ? "hideInvalid" : "showInvalid"}>Account name is already taken.<br/>Please enter a different username.</label>
                 </li>
                 <li>
-                    <button className="Submit" type="submit">Submit</button>
+                    <button data-testid="button" className="Submit" type="submit">Submit{label}</button>
                 </li>
             </ul>
         </form>

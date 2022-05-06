@@ -84,7 +84,7 @@ const Navbar = () => {
 
     return (
         <header id="navbar">
-            <h1 className = "title"><a href="/">Fuel.io</a></h1>
+            <h1 className = "title" data-testid="text"><a href="/">Fuel.io</a></h1>
             <nav className="bar">
                 <ul className="options">
                     <li className={signed_in ? "signed_out" : "signed_in"}><a href="/profile">Profile</a></li>

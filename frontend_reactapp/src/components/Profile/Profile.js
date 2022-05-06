@@ -2,9 +2,9 @@ import './Profile.css';
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
-//html/validation/etc. handled by Paul; http requests handled by Eric
+//html/validation/etc. handled by Paul; http requests handled by Eric ; buttons and display by David
 
-const Profile = () => {
+const Profile = ({label}) => {
     const history = useHistory();
     const [name, setName] = useState();
     const [address, setAddress] = useState();
@@ -237,13 +237,13 @@ const Profile = () => {
                 </li>
                 <li>
                     <div id="save" className = "submitbutton">
-                        <button className="Submit" type="submit" onClick={() => checkFields()}>Save</button>
+                        <button data-testid="Submit"  className="Submit" type="submit" onClick={() => checkFields()}>Save{label}</button>
                     </div>
                 </li>
             </ul>
             <div id="fuelquote" className = "submitbutton">
                 <a href="\fuelquoteform">
-                    <button className="Submit" type="button">Fuel Quote</button>
+                    <button data-testid="button" className="Submit" type="button">Fuel Quote</button>
                 </a>
             </div>
         </form>

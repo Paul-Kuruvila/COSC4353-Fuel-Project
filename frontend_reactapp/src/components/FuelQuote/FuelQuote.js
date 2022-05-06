@@ -179,7 +179,7 @@ const FuelQuote = () => {
               //onChange = {(e) => setZipcode(e.target.value)}
             />
         </div>
-        <button>Generate</button>
+        <button data-testid="button">Generate</button>
       </form>
       <a href = "\fuelquotehistory">
       <button type = "button">Quote History</button>
