@@ -1,6 +1,6 @@
 import './Home.css';
 
-//Home component handled by Paul; buttons and display by David
+//Home component handled by Paul; button handler for testing by David
 
 const Home = ({label}) => { 
     return (
