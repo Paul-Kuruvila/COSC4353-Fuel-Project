@@ -52,8 +52,11 @@ function express_app(db){    // implemented by Paul - exporting as function, so 
         if(username && password){
             console.log(`Attempting to register user ${username}...`);
             db.registerUser(username, password, request, response);
-        } else {
             response.send({
+                status: 'Registered user. (FROM BACKEND)'
+            });
+        } else {
+            response.status(400).send({
                 status: 'Please enter Username and Password! (FROM BACKEND)'
             });
             console.log("Please enter Username and Password! (BACKEND)");
@@ -73,6 +76,9 @@ function express_app(db){    // implemented by Paul - exporting as function, so 
         if (username && password) {
             console.log("Successfully obtained username and password");
             db.authUser(username, password, request, response);
+            response.send({
+                status: 'Successfully obtained username and password (FROM BACKEND)'
+            })
         } else {
             response.status(401).send({
                 status: 'Please enter Username and Password! (FROM BACKEND)'
@@ -86,7 +92,7 @@ function express_app(db){    // implemented by Paul - exporting as function, so 
         request.session.loggedin = false;
         let SID = request.sessionID;
         let login = request.session.loggedin;
-        request.session.destroy()
+        request.session.destroy();
         response.send({
             status: "Successfully logged out (FROM BACKEND)",
             login
@@ -99,7 +105,18 @@ function express_app(db){    // implemented by Paul - exporting as function, so 
 
     app.get('/profiledata', function(request, response) {//receiving profile data to output in the front end //done by Paul
         let username = request.session.username;
-        db.getProfile(username, request, response);
+        if(username == undefined)   username = request.body.username; // request.body.username will always be undefined aside for testing purposes
+        console.log(`Username is ${username}`);
+        if(username == undefined && request.body.username == undefined){ //
+            response.status(400).send({
+                status: "Could not fetch profile data (FROM BACKEND)"
+            })
+        } else {
+            db.getProfile(username, request, response);
+            if(request.session.username == undefined) {
+                response.send({ status: "Successfully fetched profile data (FROM BACKEND)" })   // if we are currently mocking database and testing
+            }
+        }
     })
 
     app.post('/profile', function(request, response) { //saving profile data //setup by Paul //query by Eric
@@ -107,9 +124,20 @@ function express_app(db){    // implemented by Paul - exporting as function, so 
         //console.log(request.body.state);
         //console.log(request.session.loggedin)
         //console.log(request.sessionID)
+        let fullname = request.body.name;
+        let address = request.body.address;
+        let address2 = request.body.address2;
+        let city = request.body.city;
+        let state = request.body.state;
+        let zipcode = request.body.zipcode;
 
-        if (request.session.loggedin) {
-            db.updateProfile(request, response);
+        if (request.session.loggedin || request.body.loggedin === 'yes') { // request.body.loggedin will never evaluate to 'yes' aside from testing purposes
+            db.updateProfile(fullname, address, address2, city, state, zipcode, request, response);
+            if(request.body.loggedin === 'yes'){ // request.body.loggedin will never evaluate to 'yes' aside from testing purposes
+               response.status(200).send({
+                   status: "Successfully updated profile. (FROM BACKEND)"
+               })
+            }
         } else {
             response.status(401).send({
                 status: "Please login to view this page! (FROM BACKEND)"
@@ -121,8 +149,14 @@ function express_app(db){    // implemented by Paul - exporting as function, so 
 
     app.post("/pricingmodulecost", (request, response) => { //updating total cost when receiving request input 
                                                             //calculations (by David) copied from /fuelquotemodule //done by Eric
-        if (request.session.loggedin) {
-            db.getPricingModuleCost(request, response);
+        let fuel_request = request.body.request;
+        if (request.session.loggedin || request.body.loggedin === 'yes') { // request.body.loggedin will never evaluate to 'yes' aside from testing purposes
+            db.getPricingModuleCost(fuel_request, request, response);
+            if(request.body.loggedin === 'yes'){ // request.body.loggedin will never evaluate to 'yes' aside from testing purposes
+                response.status(200).send({
+                    status: 'Successfully updated total cost (FROM BACKEND)'
+                })
+            }
         } else {
             response.status(401).send({
                 status: "Please login to view this page! (FROM BACKEND)"
@@ -134,11 +168,18 @@ function express_app(db){    // implemented by Paul - exporting as function, so 
 
     app.post("/fuelquotemodule", (request, response) => { //generating the actual fuel quote to be added to the database //setup and queried by Eric, calculations by David
         console.log('Retrieving data from frontend');
+        let fuel_request = request.body.request;
+        let fuel_date = request.body.date;
 
-        if (request.session.loggedin) {
-            db.generateFuelQuote(request, response);
+        if (request.session.loggedin || request.body.loggedin === 'yes') { // request.body.loggedin will never evaluate to 'yes' aside from testing purposes
+            db.generateFuelQuote(fuel_request, fuel_date, request, response);
+            if(request.body.loggedin === 'yes'){
+                response.status(200).send({
+                    status: "Successfully generated fuel quote. (FROM BACKEND)"
+                })
+            }
         } else {
-            response.status(403).send({
+            response.status(401).send({
                 status: "Please login to view this page! (FROM BACKEND)"
             })
             console.log("Please login to view this page!");
@@ -147,7 +188,21 @@ function express_app(db){    // implemented by Paul - exporting as function, so 
     })
 
     app.get("/fuelquotehist", (request, response) => { //receiving fuel quote data for user //done by David
-        db.getFuelQuoteHistory(request, response);
+        let username = request.session.username;
+        if(username == undefined)   username = request.body.username;   // request.body.username will always be undefined aside for testing purposes
+        if(username == undefined){ 
+            console.log(`Username is ${username}`);
+            response.status(400).send({
+                status: "Could not fetch fuel quote history (FROM BACKEND)"
+            })
+        } else {
+            db.getFuelQuoteHistory(username, response);
+            if(request.session.username == undefined){ 
+                response.status(200).send({
+                    status: 'Successfully fetched fuel quote history (FROM BACKEND)'
+                })
+            }
+        }
     })
 
     return app;

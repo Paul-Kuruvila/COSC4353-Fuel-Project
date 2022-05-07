@@ -93,7 +93,7 @@ function authUser(username, password, request, response){
 }
 
 function getProfile(username, request, response){
-    if (request.session.loggedin || request.body.loggedin == 'yes') { // request.body.loggedin will never evaluate to 'yes' aside from testing purposes
+    if (request.session.loggedin || request.body.loggedin === 'yes') { // request.body.loggedin will never evaluate to 'yes' aside from testing purposes
         console.log(`Attempting to retrieve stored information for ${username}...`);
         connection.query(`SELECT fullname, address, address2, city, state, zipcode FROM ClientInformation WHERE (SELECT userid FROM UserCredentials WHERE username = '${username}') = ClientInformation.userid`, (err, results) => {
             if (err) throw err;
@@ -111,14 +111,8 @@ function getProfile(username, request, response){
     }
 }
 
-function updateProfile(request, response){
+function updateProfile(fullname, address, address2, city, state, zipcode, request, response){
     let username = request.session.username;
-    let fullname = request.body.name;
-    let address = request.body.address;
-    let address2 = request.body.address2;
-    let city = request.body.city;
-    let state = request.body.state;
-    let zipcode = request.body.zipcode;
 
     let login = request.session.loggedin;
     let savedInfo = false;
@@ -146,8 +140,7 @@ function updateProfile(request, response){
     }
 }
 
-function getPricingModuleCost(request, response){
-    let fuel_request = request.body.request;
+function getPricingModuleCost(fuel_request, request, response){
     let fuel_price = 1.5;
     let inState;
     let histFact;
@@ -226,9 +219,7 @@ function getPricingModuleCost(request, response){
     }
 }
 
-function generateFuelQuote(request, response){
-    let fuel_request = request.body.request;
-    let fuel_date = request.body.date;
+function generateFuelQuote(fuel_request, fuel_date, request, response){
     let fuel_price = 1.5;
     let inState;
     let histFact;
@@ -312,11 +303,10 @@ function generateFuelQuote(request, response){
     }
 }
 
-function getFuelQuoteHistory(request, response){
-    let username = request.session.username;
+function getFuelQuoteHistory(username, response){
     connection.query(`SELECT fullname, address, address2, city, state, zipcode, request, date, price, cost FROM (ClientInformation, FuelQuote) WHERE ClientInformation.userid = (SELECT userid FROM UserCredentials WHERE username = '${username}') AND FuelQuote.userid = (SELECT userid FROM UserCredentials WHERE username = '${username}')`, (err, results) => {
         if (err){
-            response.status(400).send(err);
+            response.send(err);
             throw err;
         } 
         response.status(200).send(results);
@@ -331,5 +321,6 @@ module.exports = {
     updateProfile,
     getPricingModuleCost,
     generateFuelQuote,
-    getFuelQuoteHistory
+    getFuelQuoteHistory,
+    connection
 }

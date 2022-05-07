@@ -8,7 +8,10 @@
     "dev": "nodemon server"
   },
   "jest": {
-    "collectCoverage": true
+    "collectCoverage": true,
+    "collectCoverageFrom" : [
+      "app.js"
+    ]
   },
   "keywords": [],
   "author": "",
