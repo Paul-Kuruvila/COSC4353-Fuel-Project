@@ -2,9 +2,9 @@ import './Login.css';
 import React, {useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 
-//Login component html/validation/etc. handled by Paul; http requests handled by Eric
+//Login component html/validation/etc. handled by Paul; http requests handled by Eric; button handler for testing by David
 
-const Login = () => {
+const Login = ({label}) => {
     const history = useHistory();
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
@@ -55,9 +55,7 @@ const Login = () => {
                     <li>
                         <label className={validCred ? "hideInvalid" : "showInvalid"}>Invalid username/password. Please try again.</label>
                     </li>
-                    <li>
-                        <button className="Submit" type="submit">Login</button>
-                    </li>
+                    <button data-testid="button" className="Submit" type="submit">Login{label}</button>
                     <div className="signup-text">
                         <p>Don't have an account?
                             <a href="/register">Sign up here</a>.

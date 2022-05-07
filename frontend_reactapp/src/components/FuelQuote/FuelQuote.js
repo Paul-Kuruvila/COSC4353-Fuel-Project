@@ -2,7 +2,7 @@ import './FuelQuote.css';
 import React, {useEffect, useState, useCallback} from 'react';
 import {useHistory} from "react-router-dom";
 
-//Fuel quote component handled by Eric
+//Fuel quote component handled by Eric; button handler for testing by David
 
 const FuelQuote = () => {
   const history = useHistory();
@@ -179,7 +179,7 @@ const FuelQuote = () => {
               //onChange = {(e) => setZipcode(e.target.value)}
             />
         </div>
-        <button>Generate</button>
+        <button data-testid="button">Generate</button>
       </form>
       <a href = "\fuelquotehistory">
       <button type = "button">Quote History</button>

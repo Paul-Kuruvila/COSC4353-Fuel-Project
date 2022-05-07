@@ -1,13 +1,13 @@
 import './Home.css';
 
-//Home component handled by Paul
+//Home component handled by Paul; button handler for testing by David
 
-const Home = () => { 
+const Home = ({label}) => { 
     return (
         <div className="home">
             <h1>Get Your Rate of Fuel Today!</h1>   
             <div className="register">
-                <button><a href="/register" rel="noopener noreferrer">Sign Up</a></button>
+                <button data-testid="button"><a href="/register" rel="noopener noreferrer">Sign Up{label}</a></button>
             </div>
         </div>
     );
